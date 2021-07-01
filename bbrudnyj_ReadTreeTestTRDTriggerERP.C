@@ -5,12 +5,15 @@
 |    - ERP: Efficiency, Rejection and Purity for several cuts in <Q_s> for                           |
 |      Deuteron, Triton, Helium3, Alpha, Helium3 & Alpha, d & t & He3 & Alpha and their Antis        |
 |                                                                                                    |
-| Author: Benjamin Brudnyj (2016)                                                                    |
+| Author: Benjamin Brudnyj (2016)                                                                    | 
 \*--------------------------------------------------------------------------------------------------*/
 void bbrudnyj_ReadTreeTestTRDTriggerERP() {
 
-  static const Int_t n = 26;               // for purity
-  static const Int_t m = 26;               // for efficiency and rejection
+  static const Int_t n              = 26;  // for purity
+  static const Int_t m              = 26;  // for efficiency and rejection
+  static const Int_t nParticles     = 6;
+  static const Int_t nPreselections = 2;
+  static const Int_t nFiles         = 2;
 
   // number of i=n,m equals to PID cut starting point in the graphs
   // i=26 eq.to <Q_s> = 0    i=19 eq.to <Q_s> = 70    i=12 eq.to <Q_s> = 140   i=5  eq.to <Q_s> = 210
@@ -30,34 +33,48 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Define Variables
   ///__________________
-  Int_t Sigma      = 2;                    // 2 or 3 is testing in this analysis
+  Int_t Sigma      = 3;                    // 2 or 3 is testing in this analysis
 
-  char *AllOrAnti = "All";                 // which particles shall be analyse
+  char *AllOrAnti = "All";                 // which particles shall be analyse?
   //char *AllOrAnti = "Anti";
 
-  char *Collisions = "PbPb_11h";
+  //char *Collisions = "PbPb_11h_tracklets";
+  char *Collisions = "PbPb_11h"; char *Tracklets = "";
   //char *Collisions = "PbPb_11hStd";
   //char *Collisions = "pPb_13b";
   //char *Collisions = "pPb_13c";
   //char *Collisions = "pp_15f";
 
+  //char *Tracklets                    = "4trkl"; Double_t fnTrkl = 4; // exists only in PbPb_11h_tracklets
+  //char *Tracklets                    = "5trkl"; Double_t fnTrkl = 5;
+  //char *Tracklets                    = "6trkl"; Double_t fnTrkl = 6;
+
+  //Double_t pTCut                     = 2.; char *pT2 = "pT2";
+  Double_t pTCut                     = 1000.; char *pT2 = "";  // equivalent to no pT Cut
+
+  char *Particle[nParticles]         = {"Deuteron","Triton","Helium3","Alpha","Helium3Alpha","DeuTriHe3Alp"};
+
+  char *Preselection[nPreselections] = {"TPC","TPCTOF"};
+
+  char *File[nFiles]                 = {"pdf","root"};
+
   if(Sigma == 2) {
-    Double_t ClearCutDeuteronTPC    = 1.5; // Rigidity cuts on TPCnSigma histograms
-    Double_t ClearCutDeuteronTPCTOF = 1.7;
-    Double_t ClearCutTritonTPC      = 1.8;
-    Double_t ClearCutTritonTPCTOF   = 2.;
+    Double_t ClearCutDeuteronTPC     = 1.5; // Rigidity cuts on TPCnSigma histograms
+    Double_t ClearCutDeuteronTPCTOF  = 1.7;
+    Double_t ClearCutTritonTPC       = 1.8;
+    Double_t ClearCutTritonTPCTOF    = 2.;
   }
   else if(Sigma == 3) {
-    Double_t ClearCutDeuteronTPC    = 1.4;
-    Double_t ClearCutDeuteronTPCTOF = 1.7;
-    Double_t ClearCutTritonTPC      = 1.7;
-    Double_t ClearCutTritonTPCTOF   = 2.;
+    Double_t ClearCutDeuteronTPC     = 1.4;
+    Double_t ClearCutDeuteronTPCTOF  = 1.7;
+    Double_t ClearCutTritonTPC       = 1.7;
+    Double_t ClearCutTritonTPCTOF    = 2.;
   }
   else {
-    Double_t ClearCutDeuteronTPC    = 20.;
-    Double_t ClearCutDeuteronTPCTOF = 20.;
-    Double_t ClearCutTritonTPC      = 20.;
-    Double_t ClearCutTritonTPCTOF   = 20.;
+    Double_t ClearCutDeuteronTPC     = 20.;
+    Double_t ClearCutDeuteronTPCTOF  = 20.;
+    Double_t ClearCutTritonTPC       = 20.;
+    Double_t ClearCutTritonTPCTOF    = 20.;
   }
 
   Int_t nArray[n] = {0};
@@ -73,17 +90,17 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     l++;
   }
 
-  Int_t nopc          = 5;                 // "n"umber "o"f "p"ossible "c"andidates are shown in legends (nopc == 3 or 5)
+  Int_t nopc          = 3;                 // "n"umber "o"f "p"ossible "c"andidates are shown in legends (nopc == 3 or 5!)
   Float_t y1          = .0;
   if(nopc == 3) y1    = .57;
   if(nopc == 5) y1    = .45;
 
-  Int_t Deu           = 90;               // beginning of the possible cut candidates in the legends in steps of 10
-  Int_t Tri           = 90;
-  Int_t He3           = 90;
-  Int_t Alp           = 90;
-  Int_t He3Alp        = 90;
-  Int_t DeuTriHe3Alp  = 90;
+  Int_t Deu           = 100;               // beginning of the possible cut candidates in the legends in steps of 10
+  Int_t Tri           = 100;
+  Int_t He3           = 100;
+  Int_t Alp           = 100;
+  Int_t He3Alp        = 100;
+  Int_t DeuTriHe3Alp  = 100;
 
   Int_t nDeu          = (Deu          - nArray[26-n]) / 10;
   Int_t nTri          = (Tri          - nArray[26-n]) / 10;
@@ -99,8 +116,13 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   Int_t mHe3Alp       = (He3Alp       - mArray[26-m]) / 10;
   Int_t mDeuTriHe3Alp = (DeuTriHe3Alp - mArray[26-m]) / 10;
 
+  TCanvas *c[nParticles][nPreselections];
 
-  printf(Form("\nCreating and saving 12 canvases with Sigma = %i for %s particles from %s...\n\n",Sigma,AllOrAnti,Collisions));
+
+  printf(Form("\nCreating and saving 12 canvases with Sigma = %i for %s particles from %s...\n",Sigma,AllOrAnti,Collisions));
+  if(Tracklets != "" && pTCut != 2.) printf(Form("with %.f tracklet tracks\n\n",fnTrkl));
+  else if(Tracklets != "" && pTCut == 2.) printf(Form("with %.f tracklet tracks and pT < %.f\n\n",fnTrkl,pTCut));
+  else if(Tracklets == "" && pTCut == 2.) printf(Form("and pT < %.f\n\n",pTCut));
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,12 +130,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   /// Get histograms from /lustre/nyx/alice/users/bbrudnyj/codes/bbrudnyj_ReadTreeTestTRDTrigger2PID.C
   ///                 and                                    .../bbrudnyj_ReadTreeTestTRDTrigger3.C
   ///_________________________________________________________________________________________________
-  TFile *cinput1     = TFile::Open(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTrigger2/bbrudnyj_TestTRDTrigger2%s%iSigmaPID.root",Collisions,Collisions,Sigma));
-  TList *inlistPID   = (TList*)cinput1->Get(Form("bbrudnyj_TestTRDTrigger2%s%iSigmaPID;1",Collisions,Sigma));
-  TList *inlistProj  = (TList*)cinput1->Get(Form("bbrudnyj_TestTRDTrigger2%s%iSigmaProj;1",Collisions,Sigma));
+  TFile *cinput1     = TFile::Open(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/%s/bbrudnyj_ReadTreeTestTRDTrigger2/bbrudnyj_TestTRDTrigger2%s%iSigma%sPID%s.root",Collisions,Tracklets,Collisions,Sigma,Tracklets,pT2));
+  TList *inlistPID   = (TList*)cinput1->Get(Form("bbrudnyj_TestTRDTrigger2%s%iSigma%sPID%s;1",Collisions,Sigma,Tracklets,pT2));
+  TList *inlistProj  = (TList*)cinput1->Get(Form("bbrudnyj_TestTRDTrigger2%s%iSigma%sProj%s;1",Collisions,Sigma,Tracklets,pT2));
 
-  TFile *cinput2     = TFile::Open(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTrigger3/bbrudnyj_TestTRDTrigger3%s%iSigma.root",Collisions,Collisions,Sigma));
-  TList *inlistSigma = (TList*)cinput2->Get(Form("bbrudnyj_TestTRDTrigger3%s%iSigma;1",Collisions,Sigma));
+  TFile *cinput2     = TFile::Open(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/%s/bbrudnyj_ReadTreeTestTRDTrigger3/bbrudnyj_TestTRDTrigger3%s%iSigma%s%s.root",Collisions,Tracklets,Collisions,Sigma,Tracklets,pT2));
+  TList *inlistSigma = (TList*)cinput2->Get(Form("bbrudnyj_TestTRDTrigger3%s%iSigma%s%s;1",Collisions,Sigma,Tracklets,pT2));
 
   // PID histograms
     TH2D *fHistTRDpTvPID                                  = (TH2D*)inlistPID->FindObject("fHistTRDpTvPID");
@@ -360,6 +382,21 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
       //TH2D *fHistTPCnSigmavRigvDeuTriHe3AlpTPCTOF            = (TH2D*)inlistSigma->FindObject("fHistTPCnSigmavRigvAntiDeuTriHe3AlpTPCTOF");
     }
 
+      fHistTRDPIDallTPC->SetStats(0);
+      fHistTRDPIDallDeuteronTPC->SetStats(0);
+      fHistTRDPIDallTritonTPC->SetStats(0);
+      fHistTRDPIDallHelium3TPC->SetStats(0);
+      fHistTRDPIDallAlphaTPC->SetStats(0);
+      fHistTRDPIDallAlphaTPCTOF->SetStats(0);
+      fHistTRDPIDallHelium3AlphaTPC->SetStats(0);
+      fHistTRDPIDallDeuTriHe3AlpTPC->SetStats(0);
+      fHistTRDpTvPIDvDeuTriHe3AlpTPC->GetXaxis()->SetTitle("#it{p}_{T}/#it{Z} (GeV/#it{c})");
+
+      fHistTRDPIDallDeuTriHe3AlpTPCTOF->SetStats(0);
+      fHistTRDPIDallDeuTriHe3AlpTPCTOF->SetTitle("");
+      fHistTRDPIDallDeuTriHe3AlpTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Create graphs
   ///______
@@ -444,48 +481,56 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
       nDeuTriHe3AlpTPC[i]          = fHistTRDpTvPIDvDeuTriHe3AlpTPC     ->IntegralAndError(1,160,nMeanQRange[i],260,eDeuTriHe3AlpTPC[i]);
       nDeuTriHe3AlpTPCTOF[i]       = fHistTRDpTvPIDvDeuTriHe3AlpTPCTOF  ->IntegralAndError(1,160,nMeanQRange[i],260,eDeuTriHe3AlpTPCTOF[i]);
 
-      PurityDeuteronTPC[i]         = (Double_t)nDeuteronTPC[i]        / nPIDall[i];
-      PurityDeuteronTPCTOF[i]      = (Double_t)nDeuteronTPCTOF[i]     / nPIDall[i];
-      PurityTritonTPC[i]           = (Double_t)nTritonTPC[i]          / nPIDall[i];
-      PurityTritonTPCTOF[i]        = (Double_t)nTritonTPCTOF[i]       / nPIDall[i];
-      PurityHelium3TPC[i]          = (Double_t)nHelium3TPC[i]         / nPIDall[i];
-      PurityHelium3TPCTOF[i]       = (Double_t)nHelium3TPCTOF[i]      / nPIDall[i];
-      PurityAlphaTPC[i]            = (Double_t)nAlphaTPC[i]           / nPIDall[i];
-      if(AllOrAnti == "All")PurityAlphaTPCTOF[i] = (Double_t)nAlphaTPCTOF[i] / nPIDall[i];
-      PurityHelium3AlphaTPC[i]     = (Double_t)nHelium3AlphaTPC[i]    / nPIDall[i];
-      PurityHelium3AlphaTPCTOF[i]  = (Double_t)nHelium3AlphaTPCTOF[i] / nPIDall[i];
-      PurityDeuTriHe3AlpTPC[i]     = (Double_t)nDeuTriHe3AlpTPC[i]    / nPIDall[i];
-      PurityDeuTriHe3AlpTPCTOF[i]  = (Double_t)nDeuTriHe3AlpTPCTOF[i] / nPIDall[i];
+      PurityDeuteronTPC[i]         = (Double_t)nDeuteronTPC[i]        / (Double_t)nPIDall[i];
+      PurityDeuteronTPCTOF[i]      = (Double_t)nDeuteronTPCTOF[i]     / (Double_t)nPIDall[i];
+      PurityTritonTPC[i]           = (Double_t)nTritonTPC[i]          / (Double_t)nPIDall[i];
+      PurityTritonTPCTOF[i]        = (Double_t)nTritonTPCTOF[i]       / (Double_t)nPIDall[i];
+      PurityHelium3TPC[i]          = (Double_t)nHelium3TPC[i]         / (Double_t)nPIDall[i];
+      PurityHelium3TPCTOF[i]       = (Double_t)nHelium3TPCTOF[i]      / (Double_t)nPIDall[i];
+      PurityAlphaTPC[i]            = (Double_t)nAlphaTPC[i]           / (Double_t)nPIDall[i];
+      if(AllOrAnti == "All")PurityAlphaTPCTOF[i] = (Double_t)nAlphaTPCTOF[i] / (Double_t)nPIDall[i];
+      PurityHelium3AlphaTPC[i]     = (Double_t)nHelium3AlphaTPC[i]    / (Double_t)nPIDall[i];
+      PurityHelium3AlphaTPCTOF[i]  = (Double_t)nHelium3AlphaTPCTOF[i] / (Double_t)nPIDall[i];
+      PurityDeuTriHe3AlpTPC[i]     = (Double_t)nDeuTriHe3AlpTPC[i]    / (Double_t)nPIDall[i];
+      PurityDeuTriHe3AlpTPCTOF[i]  = (Double_t)nDeuTriHe3AlpTPCTOF[i] / (Double_t)nPIDall[i];
 
-      ePurityDeuteronTPC[i]        = GaussError(nDeuteronTPC[i]       ,eDeuteronTPC[i]       ,nPIDall[i],ePIDall[i]); //own function, see below
-      ePurityDeuteronTPCTOF[i]     = GaussError(nDeuteronTPCTOF[i]    ,eDeuteronTPCTOF[i]    ,nPIDall[i],ePIDall[i]);
-      ePurityTritonTPC[i]          = GaussError(nTritonTPC[i]         ,eTritonTPC[i]         ,nPIDall[i],ePIDall[i]);
-      ePurityTritonTPCTOF[i]       = GaussError(nTritonTPCTOF[i]      ,eTritonTPCTOF[i]      ,nPIDall[i],ePIDall[i]);
-      ePurityHelium3TPC[i]         = GaussError(nHelium3TPC[i]        ,eHelium3TPC[i]        ,nPIDall[i],ePIDall[i]);
-      ePurityHelium3TPCTOF[i]      = GaussError(nHelium3TPCTOF[i]     ,eHelium3TPCTOF[i]     ,nPIDall[i],ePIDall[i]);
-      ePurityAlphaTPC[i]           = GaussError(nAlphaTPC[i]          ,eAlphaTPC[i]          ,nPIDall[i],ePIDall[i]);
-      if(AllOrAnti == "All")ePurityAlphaTPCTOF[i] = GaussError(nAlphaTPCTOF[i],eAlphaTPCTOF[i],nPIDall[i],ePIDall[i]);
-      ePurityHelium3AlphaTPC[i]    = GaussError(nHelium3AlphaTPC[i]   ,eHelium3AlphaTPC[i]   ,nPIDall[i],ePIDall[i]);
-      ePurityHelium3AlphaTPCTOF[i] = GaussError(nHelium3AlphaTPCTOF[i],eHelium3AlphaTPCTOF[i],nPIDall[i],ePIDall[i]);
-      ePurityDeuTriHe3AlpTPC[i]    = GaussError(nDeuTriHe3AlpTPC[i]   ,eDeuTriHe3AlpTPC[i]   ,nPIDall[i],ePIDall[i]);
-      ePurityDeuTriHe3AlpTPCTOF[i] = GaussError(nDeuTriHe3AlpTPCTOF[i],eDeuTriHe3AlpTPCTOF[i],nPIDall[i],ePIDall[i]);
+      ePurityDeuteronTPC[i]        = GaussError((Double_t)nDeuteronTPC[i]       ,eDeuteronTPC[i]       ,(Double_t)nPIDall[i],ePIDall[i]); //own function, see below
+      ePurityDeuteronTPCTOF[i]     = GaussError((Double_t)nDeuteronTPCTOF[i]    ,eDeuteronTPCTOF[i]    ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityTritonTPC[i]          = GaussError((Double_t)nTritonTPC[i]         ,eTritonTPC[i]         ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityTritonTPCTOF[i]       = GaussError((Double_t)nTritonTPCTOF[i]      ,eTritonTPCTOF[i]      ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityHelium3TPC[i]         = GaussError((Double_t)nHelium3TPC[i]        ,eHelium3TPC[i]        ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityHelium3TPCTOF[i]      = GaussError((Double_t)nHelium3TPCTOF[i]     ,eHelium3TPCTOF[i]     ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityAlphaTPC[i]           = GaussError((Double_t)nAlphaTPC[i]          ,eAlphaTPC[i]          ,(Double_t)nPIDall[i],ePIDall[i]);
+      if(AllOrAnti == "All")ePurityAlphaTPCTOF[i] = GaussError((Double_t)nAlphaTPCTOF[i],eAlphaTPCTOF[i],(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityHelium3AlphaTPC[i]    = GaussError((Double_t)nHelium3AlphaTPC[i]   ,eHelium3AlphaTPC[i]   ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityHelium3AlphaTPCTOF[i] = GaussError((Double_t)nHelium3AlphaTPCTOF[i],eHelium3AlphaTPCTOF[i],(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityDeuTriHe3AlpTPC[i]    = GaussError((Double_t)nDeuTriHe3AlpTPC[i]   ,eDeuTriHe3AlpTPC[i]   ,(Double_t)nPIDall[i],ePIDall[i]);
+      ePurityDeuTriHe3AlpTPCTOF[i] = GaussError((Double_t)nDeuTriHe3AlpTPCTOF[i],eDeuTriHe3AlpTPCTOF[i],(Double_t)nPIDall[i],ePIDall[i]);
 
       ex[i]                        = 0.;
 
-      //cout<<nMeanQRange[i]<<"\t"<<nDeuteronTPC[i]       <<"\t"<<eDeuteronTPC[i]       <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityDeuteronTPC[i]       <<"\t+- "<<ePurityDeuteronTPC[i]    <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nDeuteronTPCTOF[i]    <<"\t"<<eDeuteronTPCTOF[i]    <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityDeuteronTPCTOF[i]    <<"\t+- "<<ePurityDeuteronTPCTOF[i] <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nTritonTPC[i]         <<"\t"<<eTritonTPC[i]         <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityTritonTPC[i]         <<"\t+- "<<ePurityTritonTPC[i]      <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nTritonTPCTOF[i]      <<"\t"<<eTritonTPCTOF[i]      <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityTritonTPCTOF[i]      <<"\t+- "<<ePurityTritonTPCTOF[i]   <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nHelium3TPC[i]        <<"\t"<<eHelium3TPC[i]        <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityHelium3TPC[i]        <<"\t+- "<<ePurityHelium3TPC[i]     <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nHelium3TPCTOF[i]     <<"\t"<<eHelium3TPCTOF[i]     <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityHelium3TPCTOF[i]     <<"\t+- "<<ePurityHelium3TPCTOF[i]  <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nAlphaTPC[i]          <<"\t"<<eAlphaTPC[i]          <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityAlphaTPC[i]          <<"\t+- "<<ePurityAlphaTPC[i]       <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nAlphaTPCTOF[i]       <<"\t"<<eAlphaTPCTOF[i]       <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityAlphaTPCTOF[i]       <<"\t+- "<<ePurityAlphaTPCTOF[i]    <<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nHelium3AlphaTPC[i]   <<"\t"<<eHelium3AlphaTPC[i]   <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityHelium3AlphaTPC[i]   <<"\t+- "<<ePurityHelium3AlphaTPC[i]<<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nHelium3AlphaTPCTOF[i]<<"\t"<<eHelium3AlphaTPCTOF[i]<<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityHelium3AlphaTPCTOF[i]<<"\t+- "<<ePurityHelium3AlphaTPCTOF[i]<<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nDeuTriHe3AlpTPC[i]   <<"\t"<<eDeuTriHe3AlpTPC[i]   <<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityDeuTriHe3AlpTPC[i]   <<"\t+- "<<ePurityDeuTriHe3AlpTPC[i]<<")"<<endl;
-      //cout<<nMeanQRange[i]<<"\t"<<nDeuTriHe3AlpTPCTOF[i]<<"\t"<<eDeuTriHe3AlpTPCTOF[i]<<"\t"<<nPIDall[i]<<"\t"<<ePIDall[i]<<"\t("<<PurityDeuTriHe3AlpTPCTOF[i]<<"\t+- "<<ePurityDeuTriHe3AlpTPCTOF[i]<<")"<<endl;
-
+      if(i==10){
+      //cout<<nMeanQRange[i]<<"\t("<<nDeuteronTPC[i]       <<"\t+- "<<eDeuteronTPC[i]       <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityDeuteronTPC[i]       <<"\t+- "<<ePurityDeuteronTPC[i]    <<")"<<endl;
+	cout<<nMeanQRange[i]<<"\t("<<nDeuteronTPCTOF[i]    <<"\t+- "<<eDeuteronTPCTOF[i]    <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityDeuteronTPCTOF[i]    <<"\t+- "<<ePurityDeuteronTPCTOF[i] <<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nTritonTPC[i]         <<"\t+- "<<eTritonTPC[i]         <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityTritonTPC[i]         <<"\t+- "<<ePurityTritonTPC[i]      <<")"<<endl;
+	cout<<nMeanQRange[i]<<"\t("<<nTritonTPCTOF[i]      <<"\t+- "<<eTritonTPCTOF[i]      <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityTritonTPCTOF[i]      <<"\t+- "<<ePurityTritonTPCTOF[i]   <<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nHelium3TPC[i]        <<"\t+- "<<eHelium3TPC[i]        <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityHelium3TPC[i]        <<"\t+- "<<ePurityHelium3TPC[i]     <<")"<<endl;
+        cout<<nMeanQRange[i]<<"\t("<<nHelium3TPCTOF[i]     <<"\t+- "<<eHelium3TPCTOF[i]     <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityHelium3TPCTOF[i]     <<"\t+- "<<ePurityHelium3TPCTOF[i]  <<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nAlphaTPC[i]          <<"\t+- "<<eAlphaTPC[i]          <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityAlphaTPC[i]          <<"\t+- "<<ePurityAlphaTPC[i]       <<")"<<endl;
+	cout<<nMeanQRange[i]<<"\t("<<nAlphaTPCTOF[i]       <<"\t+- "<<eAlphaTPCTOF[i]       <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityAlphaTPCTOF[i]       <<"\t+- "<<ePurityAlphaTPCTOF[i]    <<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nHelium3AlphaTPC[i]   <<"\t+- "<<eHelium3AlphaTPC[i]   <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityHelium3AlphaTPC[i]   <<"\t+- "<<ePurityHelium3AlphaTPC[i]<<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nHelium3AlphaTPCTOF[i]<<"\t+- "<<eHelium3AlphaTPCTOF[i]<<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityHelium3AlphaTPCTOF[i]<<"\t+- "<<ePurityHelium3AlphaTPCTOF[i]<<")"<<endl;
+      //cout<<nMeanQRange[i]<<"\t("<<nDeuTriHe3AlpTPC[i]   <<"\t+- "<<eDeuTriHe3AlpTPC[i]   <<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityDeuTriHe3AlpTPC[i]   <<"\t+- "<<ePurityDeuTriHe3AlpTPC[i]<<")"<<endl;
+        cout<<nMeanQRange[i]<<"\t("<<nDeuTriHe3AlpTPCTOF[i]<<"\t+- "<<eDeuTriHe3AlpTPCTOF[i]<<")\t("<<nPIDall[i]<<"\t+- "<<ePIDall[i]<<")\t("<<PurityDeuTriHe3AlpTPCTOF[i]<<"\t+- "<<ePurityDeuTriHe3AlpTPCTOF[i]<<")"<<endl;
+      }
     }
+
+    cout<<nMeanQRange[10]<<"\t"<<PurityDeuteronTPCTOF[10]/PurityDeuteronTPCTOF[0]<<endl;
+    cout<<nMeanQRange[10]<<"\t"<<PurityTritonTPCTOF[10]/PurityTritonTPCTOF[0]<<endl;
+    cout<<nMeanQRange[10]<<"\t"<<PurityHelium3TPCTOF[10]/PurityHelium3TPCTOF[0]<<endl;
+    cout<<nMeanQRange[10]<<"\t"<<PurityAlphaTPCTOF[10]/PurityAlphaTPCTOF[0]<<endl;
+    cout<<nMeanQRange[10]<<"\t"<<PurityDeuTriHe3AlpTPCTOF[10]/PurityDeuTriHe3AlpTPCTOF[0]<<endl;
+
 
     TGraphErrors *fPurityDeuteronTPC = new TGraphErrors(n,nMeanQRange,PurityDeuteronTPC,ex,ePurityDeuteronTPC);
     if(AllOrAnti == "All") fPurityDeuteronTPC->SetTitle("Deuteron Purity (TPC ps);<Q_{s}> (a.u.);Purity");
@@ -671,112 +716,132 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
       nPIDEntriesDeuTriHe3AlpTPC[i]    = fHistTRDpTvPIDvDeuTriHe3AlpTPC     ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesDeuTriHe3AlpTPC[i]);
       nPIDEntriesDeuTriHe3AlpTPCTOF[i] = fHistTRDpTvPIDvDeuTriHe3AlpTPCTOF  ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesDeuTriHe3AlpTPCTOF[i]);
 
-      EfficiencyDeuteronTPC[i]         = (Double_t)nPIDEntriesDeuteronTPC[i]        / nSigmaEntriesDeuteronTPC;
-      EfficiencyDeuteronTPCTOF[i]      = (Double_t)nPIDEntriesDeuteronTPCTOF[i]     / nSigmaEntriesDeuteronTPCTOF;
-      EfficiencyTritonTPC[i]           = (Double_t)nPIDEntriesTritonTPC[i]          / nSigmaEntriesTritonTPC;
-      EfficiencyTritonTPCTOF[i]        = (Double_t)nPIDEntriesTritonTPCTOF[i]       / nSigmaEntriesTritonTPCTOF;
-      EfficiencyHelium3TPC[i]          = (Double_t)nPIDEntriesHelium3TPC[i]         / nSigmaEntriesHelium3TPC;
-      EfficiencyHelium3TPCTOF[i]       = (Double_t)nPIDEntriesHelium3TPCTOF[i]      / nSigmaEntriesHelium3TPCTOF;
-      EfficiencyAlphaTPC[i]            = (Double_t)nPIDEntriesAlphaTPC[i]           / nSigmaEntriesAlphaTPC;
-      if(AllOrAnti == "All")EfficiencyAlphaTPCTOF[i] = (Double_t)nPIDEntriesAlphaTPCTOF[i] / nSigmaEntriesAlphaTPCTOF;
-      EfficiencyHelium3AlphaTPC[i]     = (Double_t)nPIDEntriesHelium3AlphaTPC[i]    / nSigmaEntriesHelium3AlphaTPC;
-      EfficiencyHelium3AlphaTPCTOF[i]  = (Double_t)nPIDEntriesHelium3AlphaTPCTOF[i] / nSigmaEntriesHelium3AlphaTPCTOF;
-      EfficiencyDeuTriHe3AlpTPC[i]     = (Double_t)nPIDEntriesDeuTriHe3AlpTPC[i]    / nSigmaEntriesDeuTriHe3AlpTPC;
-      EfficiencyDeuTriHe3AlpTPCTOF[i]  = (Double_t)nPIDEntriesDeuTriHe3AlpTPCTOF[i] / nSigmaEntriesDeuTriHe3AlpTPCTOF;
+      EfficiencyDeuteronTPC[i]         = (Double_t)nPIDEntriesDeuteronTPC[i]        / (Double_t)nSigmaEntriesDeuteronTPC;
+      EfficiencyDeuteronTPCTOF[i]      = (Double_t)nPIDEntriesDeuteronTPCTOF[i]     / (Double_t)nSigmaEntriesDeuteronTPCTOF;
+      EfficiencyTritonTPC[i]           = (Double_t)nPIDEntriesTritonTPC[i]          / (Double_t)nSigmaEntriesTritonTPC;
+      EfficiencyTritonTPCTOF[i]        = (Double_t)nPIDEntriesTritonTPCTOF[i]       / (Double_t)nSigmaEntriesTritonTPCTOF;
+      EfficiencyHelium3TPC[i]          = (Double_t)nPIDEntriesHelium3TPC[i]         / (Double_t)nSigmaEntriesHelium3TPC;
+      EfficiencyHelium3TPCTOF[i]       = (Double_t)nPIDEntriesHelium3TPCTOF[i]      / (Double_t)nSigmaEntriesHelium3TPCTOF;
+      EfficiencyAlphaTPC[i]            = (Double_t)nPIDEntriesAlphaTPC[i]           / (Double_t)nSigmaEntriesAlphaTPC;
+      if(AllOrAnti == "All")EfficiencyAlphaTPCTOF[i] = (Double_t)nPIDEntriesAlphaTPCTOF[i] / (Double_t)nSigmaEntriesAlphaTPCTOF;
+      EfficiencyHelium3AlphaTPC[i]     = (Double_t)nPIDEntriesHelium3AlphaTPC[i]    / (Double_t)nSigmaEntriesHelium3AlphaTPC;
+      EfficiencyHelium3AlphaTPCTOF[i]  = (Double_t)nPIDEntriesHelium3AlphaTPCTOF[i] / (Double_t)nSigmaEntriesHelium3AlphaTPCTOF;
+      EfficiencyDeuTriHe3AlpTPC[i]     = (Double_t)nPIDEntriesDeuTriHe3AlpTPC[i]    / (Double_t)nSigmaEntriesDeuTriHe3AlpTPC;
+      EfficiencyDeuTriHe3AlpTPCTOF[i]  = (Double_t)nPIDEntriesDeuTriHe3AlpTPCTOF[i] / (Double_t)nSigmaEntriesDeuTriHe3AlpTPCTOF;
                                                                                                                                                        //own function, see below
-      eEfficiencyDeuteronTPC[i]        = GaussError(nPIDEntriesDeuteronTPC[i]       ,ePIDEntriesDeuteronTPC[i]       ,nSigmaEntriesDeuteronTPC       ,eSigmaEntriesDeuteronTPC);
-      eEfficiencyDeuteronTPCTOF[i]     = GaussError(nPIDEntriesDeuteronTPCTOF[i]    ,ePIDEntriesDeuteronTPCTOF[i]    ,nSigmaEntriesDeuteronTPCTOF    ,eSigmaEntriesDeuteronTPCTOF);
-      eEfficiencyTritonTPC[i]          = GaussError(nPIDEntriesTritonTPC[i]         ,ePIDEntriesTritonTPC[i]         ,nSigmaEntriesTritonTPC         ,eSigmaEntriesTritonTPC);
-      eEfficiencyTritonTPCTOF[i]       = GaussError(nPIDEntriesTritonTPCTOF[i]      ,ePIDEntriesTritonTPCTOF[i]      ,nSigmaEntriesTritonTPCTOF      ,eSigmaEntriesTritonTPCTOF);
-      eEfficiencyHelium3TPC[i]         = GaussError(nPIDEntriesHelium3TPC[i]        ,ePIDEntriesHelium3TPC[i]        ,nSigmaEntriesHelium3TPC        ,eSigmaEntriesHelium3TPC);
-      eEfficiencyHelium3TPCTOF[i]      = GaussError(nPIDEntriesHelium3TPCTOF[i]     ,ePIDEntriesHelium3TPCTOF[i]     ,nSigmaEntriesHelium3TPCTOF     ,eSigmaEntriesHelium3TPCTOF);
-      eEfficiencyAlphaTPC[i]           = GaussError(nPIDEntriesAlphaTPC[i]          ,ePIDEntriesAlphaTPC[i]          ,nSigmaEntriesAlphaTPC          ,eSigmaEntriesAlphaTPC);
-      if(AllOrAnti == "All")eEfficiencyAlphaTPCTOF[i] = GaussError(nPIDEntriesAlphaTPCTOF[i],ePIDEntriesAlphaTPCTOF[i],nSigmaEntriesAlphaTPCTOF      ,eSigmaEntriesAlphaTPCTOF);
-      eEfficiencyHelium3AlphaTPC[i]    = GaussError(nPIDEntriesHelium3AlphaTPC[i]   ,ePIDEntriesHelium3AlphaTPC[i]   ,nSigmaEntriesHelium3AlphaTPC   ,eSigmaEntriesHelium3AlphaTPC);
-      eEfficiencyHelium3AlphaTPCTOF[i] = GaussError(nPIDEntriesHelium3AlphaTPCTOF[i],ePIDEntriesHelium3AlphaTPCTOF[i],nSigmaEntriesHelium3AlphaTPCTOF,eSigmaEntriesHelium3AlphaTPCTOF);
-      eEfficiencyDeuTriHe3AlpTPC[i]    = GaussError(nPIDEntriesDeuTriHe3AlpTPC[i]   ,ePIDEntriesDeuTriHe3AlpTPC[i]   ,nSigmaEntriesDeuTriHe3AlpTPC   ,eSigmaEntriesDeuTriHe3AlpTPC);
-      eEfficiencyDeuTriHe3AlpTPCTOF[i] = GaussError(nPIDEntriesDeuTriHe3AlpTPCTOF[i],ePIDEntriesDeuTriHe3AlpTPCTOF[i],nSigmaEntriesDeuTriHe3AlpTPCTOF,eSigmaEntriesDeuTriHe3AlpTPCTOF);
+      eEfficiencyDeuteronTPC[i]        = GaussError((Double_t)nPIDEntriesDeuteronTPC[i]       ,ePIDEntriesDeuteronTPC[i]       ,(Double_t)nSigmaEntriesDeuteronTPC       ,eSigmaEntriesDeuteronTPC);
+      eEfficiencyDeuteronTPCTOF[i]     = GaussError((Double_t)nPIDEntriesDeuteronTPCTOF[i]    ,ePIDEntriesDeuteronTPCTOF[i]    ,(Double_t)nSigmaEntriesDeuteronTPCTOF    ,eSigmaEntriesDeuteronTPCTOF);
+      eEfficiencyTritonTPC[i]          = GaussError((Double_t)nPIDEntriesTritonTPC[i]         ,ePIDEntriesTritonTPC[i]         ,(Double_t)nSigmaEntriesTritonTPC         ,eSigmaEntriesTritonTPC);
+      eEfficiencyTritonTPCTOF[i]       = GaussError((Double_t)nPIDEntriesTritonTPCTOF[i]      ,ePIDEntriesTritonTPCTOF[i]      ,(Double_t)nSigmaEntriesTritonTPCTOF      ,eSigmaEntriesTritonTPCTOF);
+      eEfficiencyHelium3TPC[i]         = GaussError((Double_t)nPIDEntriesHelium3TPC[i]        ,ePIDEntriesHelium3TPC[i]        ,(Double_t)nSigmaEntriesHelium3TPC        ,eSigmaEntriesHelium3TPC);
+      eEfficiencyHelium3TPCTOF[i]      = GaussError((Double_t)nPIDEntriesHelium3TPCTOF[i]     ,ePIDEntriesHelium3TPCTOF[i]     ,(Double_t)nSigmaEntriesHelium3TPCTOF     ,eSigmaEntriesHelium3TPCTOF);
+      eEfficiencyAlphaTPC[i]           = GaussError((Double_t)nPIDEntriesAlphaTPC[i]          ,ePIDEntriesAlphaTPC[i]          ,(Double_t)nSigmaEntriesAlphaTPC          ,eSigmaEntriesAlphaTPC);
+      if(AllOrAnti == "All")eEfficiencyAlphaTPCTOF[i] = GaussError((Double_t)nPIDEntriesAlphaTPCTOF[i],ePIDEntriesAlphaTPCTOF[i],(Double_t)nSigmaEntriesAlphaTPCTOF      ,eSigmaEntriesAlphaTPCTOF);
+      eEfficiencyHelium3AlphaTPC[i]    = GaussError((Double_t)nPIDEntriesHelium3AlphaTPC[i]   ,ePIDEntriesHelium3AlphaTPC[i]   ,(Double_t)nSigmaEntriesHelium3AlphaTPC   ,eSigmaEntriesHelium3AlphaTPC);
+      eEfficiencyHelium3AlphaTPCTOF[i] = GaussError((Double_t)nPIDEntriesHelium3AlphaTPCTOF[i],ePIDEntriesHelium3AlphaTPCTOF[i],(Double_t)nSigmaEntriesHelium3AlphaTPCTOF,eSigmaEntriesHelium3AlphaTPCTOF);
+      eEfficiencyDeuTriHe3AlpTPC[i]    = GaussError((Double_t)nPIDEntriesDeuTriHe3AlpTPC[i]   ,ePIDEntriesDeuTriHe3AlpTPC[i]   ,(Double_t)nSigmaEntriesDeuTriHe3AlpTPC   ,eSigmaEntriesDeuTriHe3AlpTPC);
+      eEfficiencyDeuTriHe3AlpTPCTOF[i] = GaussError((Double_t)nPIDEntriesDeuTriHe3AlpTPCTOF[i],ePIDEntriesDeuTriHe3AlpTPCTOF[i],(Double_t)nSigmaEntriesDeuTriHe3AlpTPCTOF,eSigmaEntriesDeuTriHe3AlpTPCTOF);
 
       errx[i]                          = 0.;
 
+      if(i==10){
+      //cout << i << ": " << nPIDEntriesHelium3TPC[i] << "  " << ePIDEntriesHelium3TPC[i] << "  " << nSigmaEntriesHelium3TPC << "  " << eSigmaEntriesHelium3TPC << endl;
+
       //cout <<"Deuteron efficiency with TPC preselection and PID cut at "               << mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPC[i]       <<"\t+- "<<eEfficiencyDeuteronTPC[i]       <<")"<< endl;
-      //cout <<"Deuteron efficiency with TPC&TOF preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPCTOF[i]    <<"\t+- "<<eEfficiencyDeuteronTPCTOF[i]    <<")"<< endl;
+      cout <<"Deuteron efficiency with TPC&TOF preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPCTOF[i]    <<"\t+- "<<eEfficiencyDeuteronTPCTOF[i]    <<")"<< endl;
       //cout <<"Triton efficiency with TPC preselection and PID cut at "                 << mMeanQRange[i] <<":\t("<< EfficiencyTritonTPC[i]         <<"\t+- "<<eEfficiencyTritonTPC[i]         <<")"<< endl;
-      //cout <<"Triton efficiency with TPC&TOF preselection and PID cut at "             << mMeanQRange[i] <<":\t("<< EfficiencyTritonTPCTOF[i]      <<"\t+- "<<eEfficiencyTritonTPCTOF[i]      <<")"<< endl;
+      cout <<"Triton efficiency with TPC&TOF preselection and PID cut at "             << mMeanQRange[i] <<":\t("<< EfficiencyTritonTPCTOF[i]      <<"\t+- "<<eEfficiencyTritonTPCTOF[i]      <<")"<< endl;
       //cout <<"Helium3 efficiency with TPC preselection and PID cut at "                << mMeanQRange[i] <<":\t("<< EfficiencyHelium3TPC[i]        <<"\t+- "<<eEfficiencyHelium3TPC[i]        <<")"<< endl;
-      //cout <<"Helium3 efficiency with TPC&TOF preselection and PID cut at "            << mMeanQRange[i] <<":\t("<< EfficiencyHelium3TPCTOF[i]     <<"\t+- "<<eEfficiencyHelium3TPCTOF[i]     <<")"<< endl;
+      cout <<"Helium3 efficiency with TPC&TOF preselection and PID cut at "            << mMeanQRange[i] <<":\t("<< EfficiencyHelium3TPCTOF[i]     <<"\t+- "<<eEfficiencyHelium3TPCTOF[i]     <<")"<< endl;
       //cout <<"Alpha efficiency with TPC preselection and PID cut at "                  << mMeanQRange[i] <<":\t("<< EfficiencyAlphaTPC[i]          <<"\t+- "<<eEfficiencyAlphaTPC[i]          <<")"<< endl;
-      //cout <<"Alpha efficiency with TPC&TOF preselection and PID cut at "              << mMeanQRange[i] <<":\t("<< EfficiencyAlphaTPCTOF[i]       <<"\t+- "<<eEfficiencyAlphaTPCTOF[i]       <<")"<< endl;
+      cout <<"Alpha efficiency with TPC&TOF preselection and PID cut at "              << mMeanQRange[i] <<":\t("<< EfficiencyAlphaTPCTOF[i]       <<"\t+- "<<eEfficiencyAlphaTPCTOF[i]       <<")"<< endl;
       //cout <<"Z=2 particle efficiency with TPC preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< EfficiencyHelium3AlphaTPC[i]   <<"\t+- "<<eEfficiencyHelium3AlphaTPC[i]   <<")"<< endl;
       //cout <<"Z=2 particle efficiency with TPC&TOF preselection and PID cut at "       << mMeanQRange[i] <<":\t("<< EfficiencyHelium3AlphaTPCTOF[i]<<"\t+- "<<eEfficiencyHelium3AlphaTPCTOF[i]<<")"<< endl;
       //cout <<"d & t & He3 & Alpha efficiency with TPC preselection and PID cut at "    << mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPC[i]       <<"\t+- "<<eEfficiencyDeuTriHe3AlpTPC[i]   <<")"<< endl;
-      //cout <<"d & t & He3 & Alpha efficiency with TPC&TOF preselection and PID cut at "<< mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPCTOF[i]    <<"\t+- "<<eEfficiencyDeuTriHe3AlpTPCTOF[i]<<")"<< endl;
+      cout <<"d & t & He3 & Alpha efficiency with TPC&TOF preselection and PID cut at "<< mMeanQRange[i] <<":\t("<< EfficiencyDeuteronTPCTOF[i]    <<"\t+- "<<eEfficiencyDeuTriHe3AlpTPCTOF[i]<<")"<< endl;
+      }
     }
 
 
     TGraphErrors *fEfficiencyDeuteronTPC = new TGraphErrors(m,mMeanQRange,EfficiencyDeuteronTPC,errx,eEfficiencyDeuteronTPC);
-    if(AllOrAnti == "All") fEfficiencyDeuteronTPC->SetTitle("Deuteron Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyDeuteronTPC->SetTitle("Anti-Deuteron Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyDeuteronTPC->SetMarkerStyle(7);
-    fEfficiencyDeuteronTPC->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyDeuteronTPC->SetTitle("Deuteron Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyDeuteronTPC->SetTitle("Anti-Deuteron Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyDeuteronTPC->SetMarkerStyle(7);
+    fEfficiencyDeuteronTPC->SetMarkerStyle(20);
+    //fEfficiencyDeuteronTPC->SetMarkerColor(4);
+    fEfficiencyDeuteronTPC->SetMarkerColor(6);
     TGraphErrors *fEfficiencyDeuteronTPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyDeuteronTPCTOF,errx,eEfficiencyDeuteronTPCTOF);
-    if(AllOrAnti == "All") fEfficiencyDeuteronTPCTOF->SetTitle("Deuteron Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyDeuteronTPCTOF->SetTitle("Anti-Deuteron Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyDeuteronTPCTOF->SetMarkerStyle(7);
-    fEfficiencyDeuteronTPCTOF->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyDeuteronTPCTOF->SetTitle("Deuteron Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyDeuteronTPCTOF->SetTitle("Anti-Deuteron Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyDeuteronTPCTOF->SetMarkerStyle(7);
+    fEfficiencyDeuteronTPCTOF->SetMarkerStyle(20);
+    //fEfficiencyDeuteronTPCTOF->SetMarkerColor(4);
+    fEfficiencyDeuteronTPCTOF->SetMarkerColor(6);
 
     TGraphErrors *fEfficiencyTritonTPC = new TGraphErrors(m,mMeanQRange,EfficiencyTritonTPC,errx,eEfficiencyTritonTPC);
-    if(AllOrAnti == "All") fEfficiencyTritonTPC->SetTitle("Triton Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyTritonTPC->SetTitle("Anti-Triton Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyTritonTPC->SetMarkerStyle(7);
-    fEfficiencyTritonTPC->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyTritonTPC->SetTitle("Triton Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyTritonTPC->SetTitle("Anti-Triton Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyTritonTPC->SetMarkerStyle(7);
+    fEfficiencyTritonTPC->SetMarkerStyle(22);
+    //fEfficiencyTritonTPC->SetMarkerColor(4);
+    fEfficiencyTritonTPC->SetMarkerColor(7);
     TGraphErrors *fEfficiencyTritonTPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyTritonTPCTOF,errx,eEfficiencyTritonTPCTOF);
-    if(AllOrAnti == "All") fEfficiencyTritonTPCTOF->SetTitle("Triton Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyTritonTPCTOF->SetTitle("Anti-Triton Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyTritonTPCTOF->SetMarkerStyle(7);
-    fEfficiencyTritonTPCTOF->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyTritonTPCTOF->SetTitle("Triton Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyTritonTPCTOF->SetTitle("Anti-Triton Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyTritonTPCTOF->SetMarkerStyle(7);
+    fEfficiencyTritonTPCTOF->SetMarkerStyle(22);
+    //fEfficiencyTritonTPCTOF->SetMarkerColor(4);
+    fEfficiencyTritonTPCTOF->SetMarkerColor(7);
 
     TGraphErrors *fEfficiencyHelium3TPC = new TGraphErrors(m,mMeanQRange,EfficiencyHelium3TPC,errx,eEfficiencyHelium3TPC);
-    if(AllOrAnti == "All") fEfficiencyHelium3TPC->SetTitle("Helium3 Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyHelium3TPC->SetTitle("Anti-Helium3 Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyHelium3TPC->SetMarkerStyle(7);
-    fEfficiencyHelium3TPC->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyHelium3TPC->SetTitle("Helium3 Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyHelium3TPC->SetTitle("Anti-Helium3 Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyHelium3TPC->SetMarkerStyle(7);
+    fEfficiencyHelium3TPC->SetMarkerStyle(33);
+    //fEfficiencyHelium3TPC->SetMarkerColor(4);
+    fEfficiencyHelium3TPC->SetMarkerColor(1);
     TGraphErrors *fEfficiencyHelium3TPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyHelium3TPCTOF,errx,eEfficiencyHelium3TPCTOF);
-    if(AllOrAnti == "All") fEfficiencyHelium3TPCTOF->SetTitle("Helium3 Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyHelium3TPCTOF->SetTitle("Anti-Helium3 Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyHelium3TPCTOF->SetMarkerStyle(7);
-    fEfficiencyHelium3TPCTOF->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyHelium3TPCTOF->SetTitle("Helium3 Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyHelium3TPCTOF->SetTitle("Anti-Helium3 Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyHelium3TPCTOF->SetMarkerStyle(7);
+    fEfficiencyHelium3TPCTOF->SetMarkerStyle(33);
+    //fEfficiencyHelium3TPCTOF->SetMarkerColor(4);
+    fEfficiencyHelium3TPCTOF->SetMarkerColor(1);
 
     TGraphErrors *fEfficiencyAlphaTPC = new TGraphErrors(m,mMeanQRange,EfficiencyAlphaTPC,errx,eEfficiencyAlphaTPC);
-    if(AllOrAnti == "All") fEfficiencyAlphaTPC->SetTitle("Alpha Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyAlphaTPC->SetTitle("Anti-Alpha Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyAlphaTPC->SetMarkerStyle(7);
-    fEfficiencyAlphaTPC->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyAlphaTPC->SetTitle("Alpha Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyAlphaTPC->SetTitle("Anti-Alpha Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyAlphaTPC->SetMarkerStyle(7);
+    fEfficiencyAlphaTPC->SetMarkerStyle(34);
+    //fEfficiencyAlphaTPC->SetMarkerColor(4);
+    fEfficiencyAlphaTPC->SetMarkerColor(15);
     TGraphErrors *fEfficiencyAlphaTPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyAlphaTPCTOF,errx,eEfficiencyAlphaTPCTOF);
-    if(AllOrAnti == "All") fEfficiencyAlphaTPCTOF->SetTitle("Alpha Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyAlphaTPCTOF->SetTitle("Anti-Alpha Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    fEfficiencyAlphaTPCTOF->SetMarkerStyle(7);
-    fEfficiencyAlphaTPCTOF->SetMarkerColor(4);
+    if(AllOrAnti == "All") fEfficiencyAlphaTPCTOF->SetTitle("Alpha Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyAlphaTPCTOF->SetTitle("Anti-Alpha Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    //fEfficiencyAlphaTPCTOF->SetMarkerStyle(7);
+    fEfficiencyAlphaTPCTOF->SetMarkerStyle(34);
+    //fEfficiencyAlphaTPCTOF->SetMarkerColor(4);
+    fEfficiencyAlphaTPCTOF->SetMarkerColor(15);
 
     TGraphErrors *fEfficiencyHelium3AlphaTPC = new TGraphErrors(m,mMeanQRange,EfficiencyHelium3AlphaTPC,errx,eEfficiencyHelium3AlphaTPC);
-    if(AllOrAnti == "All") fEfficiencyHelium3AlphaTPC->SetTitle("Z=2 Particle Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyHelium3AlphaTPC->SetTitle("Z=2 Anti-Particle Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
+    if(AllOrAnti == "All") fEfficiencyHelium3AlphaTPC->SetTitle("Z=2 Particle Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyHelium3AlphaTPC->SetTitle("Z=2 Anti-Particle Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
     fEfficiencyHelium3AlphaTPC->SetMarkerStyle(7);
     fEfficiencyHelium3AlphaTPC->SetMarkerColor(4);
     TGraphErrors *fEfficiencyHelium3AlphaTPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyHelium3AlphaTPCTOF,errx,eEfficiencyHelium3AlphaTPCTOF);
-    if(AllOrAnti == "All") fEfficiencyHelium3AlphaTPCTOF->SetTitle("Z=2 Particle Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyHelium3AlphaTPCTOF->SetTitle("Z=2 Anti-Particle Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
+    if(AllOrAnti == "All") fEfficiencyHelium3AlphaTPCTOF->SetTitle("Z=2 Particle Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyHelium3AlphaTPCTOF->SetTitle("Z=2 Anti-Particle Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
     fEfficiencyHelium3AlphaTPCTOF->SetMarkerStyle(7);
     fEfficiencyHelium3AlphaTPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fEfficiencyDeuTriHe3AlpTPC = new TGraphErrors(m,mMeanQRange,EfficiencyDeuTriHe3AlpTPC,errx,eEfficiencyDeuTriHe3AlpTPC);
-    if(AllOrAnti == "All") fEfficiencyDeuTriHe3AlpTPC->SetTitle("d & t & He3 & Alpha Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyDeuTriHe3AlpTPC->SetTitle("Anti-d & -t & -He3 & -Alpha Efficiency (TPC ps);<Q_{s}> (a.u.);Efficiency");
+    if(AllOrAnti == "All") fEfficiencyDeuTriHe3AlpTPC->SetTitle("d & t & He3 & Alpha Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyDeuTriHe3AlpTPC->SetTitle("Anti-d & -t & -He3 & -Alpha Efficiency (TPC ps);<Q_{s}> (arb. units);Efficiency");
     fEfficiencyDeuTriHe3AlpTPC->SetMarkerStyle(7);
     fEfficiencyDeuTriHe3AlpTPC->SetMarkerColor(4);
     TGraphErrors *fEfficiencyDeuTriHe3AlpTPCTOF = new TGraphErrors(m,mMeanQRange,EfficiencyDeuTriHe3AlpTPCTOF,errx,eEfficiencyDeuTriHe3AlpTPCTOF);
-    if(AllOrAnti == "All") fEfficiencyDeuTriHe3AlpTPCTOF->SetTitle("d & t & He3 & Alpha Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
-    if(AllOrAnti == "Anti")fEfficiencyDeuTriHe3AlpTPCTOF->SetTitle("Anti-d & -t & -He3 & -Alpha Efficiency (TPC&TOF ps);<Q_{s}> (a.u.);Efficiency");
+    if(AllOrAnti == "All") fEfficiencyDeuTriHe3AlpTPCTOF->SetTitle("d & t & He3 & Alpha Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
+    if(AllOrAnti == "Anti")fEfficiencyDeuTriHe3AlpTPCTOF->SetTitle("Anti-d & -t & -He3 & -Alpha Efficiency (TPC&TOF ps);<Q_{s}> (arb. units);Efficiency");
     fEfficiencyDeuTriHe3AlpTPCTOF->SetMarkerStyle(7);
     fEfficiencyDeuTriHe3AlpTPCTOF->SetMarkerColor(4);
 
@@ -879,125 +944,128 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     for(Int_t i = 0; i < m; i++) {
       mMeanQRange[i]                            = mMinBin + i*10;
 
-      nPIDEntriesAllexceptDeuteronTPC[i]        = fHistTRDpTvPIDvAllexceptDeuteronTPC_clear   ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptDeuteronTPC[i]);
-      nPIDEntriesAllexceptDeuteronTPCTOF[i]     = fHistTRDpTvPIDvAllexceptDeuteronTPCTOF_clear->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptDeuteronTPCTOF[i]);
-      nPIDEntriesAllexceptTritonTPC[i]          = fHistTRDpTvPIDvAllexceptTritonTPC_clear     ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptTritonTPC[i]);
-      nPIDEntriesAllexceptTritonTPCTOF[i]       = fHistTRDpTvPIDvAllexceptTritonTPCTOF_clear  ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptTritonTPCTOF[i]);
-      nPIDEntriesAllexceptHelium3TPC[i]         = fHistTRDpTvPIDvAllexceptHelium3TPC          ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3TPC[i]);
-      nPIDEntriesAllexceptHelium3TPCTOF[i]      = fHistTRDpTvPIDvAllexceptHelium3TPCTOF       ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3TPCTOF[i]);
-      nPIDEntriesAllexceptAlphaTPC[i]           = fHistTRDpTvPIDvAllexceptAlphaTPC            ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptAlphaTPC[i]);
-      nPIDEntriesAllexceptAlphaTPCTOF[i]        = fHistTRDpTvPIDvAllexceptAlphaTPCTOF         ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptAlphaTPCTOF[i]);
-      nPIDEntriesAllexceptHelium3AlphaTPC[i]    = fHistTRDpTvPIDvAllexceptHelium3AlphaTPC     ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3AlphaTPC[i]);
-      nPIDEntriesAllexceptHelium3AlphaTPCTOF[i] = fHistTRDpTvPIDvAllexceptHelium3AlphaTPCTOF  ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3AlphaTPCTOF[i]);
-      nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]    = fHistTRDpTvPIDvAllexceptDeuTriHe3AlpTPC     ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptDeuTriHe3AlpTPC[i]);
-      nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i] = fHistTRDpTvPIDvAllexceptDeuTriHe3AlpTPCTOF  ->IntegralAndError(1,160,mMeanQRange[i],260,ePIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i]);
+      nPIDEntriesAllexceptDeuteronTPC[i]        = fHistTRDpTvPIDvAllexceptDeuteronTPC_clear   ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptDeuteronTPC[i]);
+      nPIDEntriesAllexceptDeuteronTPCTOF[i]     = fHistTRDpTvPIDvAllexceptDeuteronTPCTOF_clear->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptDeuteronTPCTOF[i]);
+      nPIDEntriesAllexceptTritonTPC[i]          = fHistTRDpTvPIDvAllexceptTritonTPC_clear     ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptTritonTPC[i]);
+      nPIDEntriesAllexceptTritonTPCTOF[i]       = fHistTRDpTvPIDvAllexceptTritonTPCTOF_clear  ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptTritonTPCTOF[i]);
+      nPIDEntriesAllexceptHelium3TPC[i]         = fHistTRDpTvPIDvAllexceptHelium3TPC          ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3TPC[i]);
+      nPIDEntriesAllexceptHelium3TPCTOF[i]      = fHistTRDpTvPIDvAllexceptHelium3TPCTOF       ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3TPCTOF[i]);
+      nPIDEntriesAllexceptAlphaTPC[i]           = fHistTRDpTvPIDvAllexceptAlphaTPC            ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptAlphaTPC[i]);
+      nPIDEntriesAllexceptAlphaTPCTOF[i]        = fHistTRDpTvPIDvAllexceptAlphaTPCTOF         ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptAlphaTPCTOF[i]);
+      nPIDEntriesAllexceptHelium3AlphaTPC[i]    = fHistTRDpTvPIDvAllexceptHelium3AlphaTPC     ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3AlphaTPC[i]);
+      nPIDEntriesAllexceptHelium3AlphaTPCTOF[i] = fHistTRDpTvPIDvAllexceptHelium3AlphaTPCTOF  ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptHelium3AlphaTPCTOF[i]);
+      nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]    = fHistTRDpTvPIDvAllexceptDeuTriHe3AlpTPC     ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptDeuTriHe3AlpTPC[i]);
+      nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i] = fHistTRDpTvPIDvAllexceptDeuTriHe3AlpTPCTOF  ->IntegralAndError(1,500,mMeanQRange[i],260,ePIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i]);
 
-      RejectionDeuteronTPC[i]         = (Double_t)nPIDEntriesAllexceptDeuteronTPC[i]        / nSigmaEntriesAllexceptDeuteronTPC;
-      RejectionDeuteronTPCTOF[i]      = (Double_t)nPIDEntriesAllexceptDeuteronTPCTOF[i]     / nSigmaEntriesAllexceptDeuteronTPCTOF;
-      RejectionTritonTPC[i]           = (Double_t)nPIDEntriesAllexceptTritonTPC[i]          / nSigmaEntriesAllexceptTritonTPC;
-      RejectionTritonTPCTOF[i]        = (Double_t)nPIDEntriesAllexceptTritonTPCTOF[i]       / nSigmaEntriesAllexceptTritonTPCTOF;
-      RejectionHelium3TPC[i]          = (Double_t)nPIDEntriesAllexceptHelium3TPC[i]         / nSigmaEntriesAllexceptHelium3TPC;
-      RejectionHelium3TPCTOF[i]       = (Double_t)nPIDEntriesAllexceptHelium3TPCTOF[i]      / nSigmaEntriesAllexceptHelium3TPCTOF;
-      RejectionAlphaTPC[i]            = (Double_t)nPIDEntriesAllexceptAlphaTPC[i]           / nSigmaEntriesAllexceptAlphaTPC;
-      RejectionAlphaTPCTOF[i]         = (Double_t)nPIDEntriesAllexceptAlphaTPCTOF[i]        / nSigmaEntriesAllexceptAlphaTPCTOF;
-      RejectionHelium3AlphaTPC[i]     = (Double_t)nPIDEntriesAllexceptHelium3AlphaTPC[i]    / nSigmaEntriesAllexceptHelium3AlphaTPC;
-      RejectionHelium3AlphaTPCTOF[i]  = (Double_t)nPIDEntriesAllexceptHelium3AlphaTPCTOF[i] / nSigmaEntriesAllexceptHelium3AlphaTPCTOF;
-      RejectionDeuTriHe3AlpTPC[i]     = (Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]    / nSigmaEntriesAllexceptDeuTriHe3AlpTPC;
-      RejectionDeuTriHe3AlpTPCTOF[i]  = (Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i] / nSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF;
+      RejectionDeuteronTPC[i]         = (Double_t)nPIDEntriesAllexceptDeuteronTPC[i]        / (Double_t)nSigmaEntriesAllexceptDeuteronTPC;
+      RejectionDeuteronTPCTOF[i]      = (Double_t)nPIDEntriesAllexceptDeuteronTPCTOF[i]     / (Double_t)nSigmaEntriesAllexceptDeuteronTPCTOF;
+      RejectionTritonTPC[i]           = (Double_t)nPIDEntriesAllexceptTritonTPC[i]          / (Double_t)nSigmaEntriesAllexceptTritonTPC;
+      RejectionTritonTPCTOF[i]        = (Double_t)nPIDEntriesAllexceptTritonTPCTOF[i]       / (Double_t)nSigmaEntriesAllexceptTritonTPCTOF;
+      RejectionHelium3TPC[i]          = (Double_t)nPIDEntriesAllexceptHelium3TPC[i]         / (Double_t)nSigmaEntriesAllexceptHelium3TPC;
+      RejectionHelium3TPCTOF[i]       = (Double_t)nPIDEntriesAllexceptHelium3TPCTOF[i]      / (Double_t)nSigmaEntriesAllexceptHelium3TPCTOF;
+      RejectionAlphaTPC[i]            = (Double_t)nPIDEntriesAllexceptAlphaTPC[i]           / (Double_t)nSigmaEntriesAllexceptAlphaTPC;
+      RejectionAlphaTPCTOF[i]         = (Double_t)nPIDEntriesAllexceptAlphaTPCTOF[i]        / (Double_t)nSigmaEntriesAllexceptAlphaTPCTOF;
+      RejectionHelium3AlphaTPC[i]     = (Double_t)nPIDEntriesAllexceptHelium3AlphaTPC[i]    / (Double_t)nSigmaEntriesAllexceptHelium3AlphaTPC;
+      RejectionHelium3AlphaTPCTOF[i]  = (Double_t)nPIDEntriesAllexceptHelium3AlphaTPCTOF[i] / (Double_t)nSigmaEntriesAllexceptHelium3AlphaTPCTOF;
+      RejectionDeuTriHe3AlpTPC[i]     = (Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]    / (Double_t)nSigmaEntriesAllexceptDeuTriHe3AlpTPC;
+      RejectionDeuTriHe3AlpTPCTOF[i]  = (Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i] / (Double_t)nSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF;
                                                                                                                                                                                       //own function, see below
-      eRejectionDeuteronTPC[i]        = GaussError(nPIDEntriesAllexceptDeuteronTPC[i]       ,ePIDEntriesAllexceptDeuteronTPC[i]       ,nSigmaEntriesAllexceptDeuteronTPC    ,eSigmaEntriesAllexceptDeuteronTPC);
-      eRejectionDeuteronTPCTOF[i]     = GaussError(nPIDEntriesAllexceptDeuteronTPCTOF[i]    ,ePIDEntriesAllexceptDeuteronTPCTOF[i]   ,nSigmaEntriesAllexceptDeuteronTPCTOF,eSigmaEntriesAllexceptDeuteronTPCTOF);
-      eRejectionTritonTPC[i]          = GaussError(nPIDEntriesAllexceptTritonTPC[i]         ,ePIDEntriesAllexceptTritonTPC[i]         ,nSigmaEntriesAllexceptTritonTPC         ,eSigmaEntriesAllexceptTritonTPC);
-      eRejectionTritonTPCTOF[i]       = GaussError(nPIDEntriesAllexceptTritonTPCTOF[i]      ,ePIDEntriesAllexceptTritonTPCTOF[i]      ,nSigmaEntriesAllexceptTritonTPCTOF   ,eSigmaEntriesAllexceptTritonTPCTOF);
-      eRejectionHelium3TPC[i]         = GaussError(nPIDEntriesAllexceptHelium3TPC[i]        ,ePIDEntriesAllexceptHelium3TPC[i]        ,nSigmaEntriesAllexceptHelium3TPC       ,eSigmaEntriesAllexceptHelium3TPC);
-      eRejectionHelium3TPCTOF[i]      = GaussError(nPIDEntriesAllexceptHelium3TPCTOF[i]     ,ePIDEntriesAllexceptHelium3TPCTOF[i]     ,nSigmaEntriesAllexceptHelium3TPCTOF ,eSigmaEntriesAllexceptHelium3TPCTOF);
-      eRejectionAlphaTPC[i]           = GaussError(nPIDEntriesAllexceptAlphaTPC[i]          ,ePIDEntriesAllexceptAlphaTPC[i]          ,nSigmaEntriesAllexceptAlphaTPC          ,eSigmaEntriesAllexceptAlphaTPC);
-      eRejectionAlphaTPCTOF[i]        = GaussError(nPIDEntriesAllexceptAlphaTPCTOF[i]       ,ePIDEntriesAllexceptAlphaTPCTOF[i]       ,nSigmaEntriesAllexceptAlphaTPCTOF     ,eSigmaEntriesAllexceptAlphaTPCTOF);
-      eRejectionHelium3AlphaTPC[i]    = GaussError(nPIDEntriesAllexceptHelium3AlphaTPC[i]   ,ePIDEntriesAllexceptHelium3AlphaTPC[i],nSigmaEntriesAllexceptHelium3AlphaTPC,eSigmaEntriesAllexceptHelium3AlphaTPC);
-      eRejectionHelium3AlphaTPCTOF[i] = GaussError(nPIDEntriesAllexceptHelium3AlphaTPCTOF[i],ePIDEntriesAllexceptHelium3AlphaTPCTOF[i],nSigmaEntriesAllexceptHelium3AlphaTPCTOF,eSigmaEntriesAllexceptHelium3AlphaTPCTOF);
-      eRejectionDeuTriHe3AlpTPC[i]    = GaussError(nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]   ,ePIDEntriesAllexceptDeuTriHe3AlpTPC[i],nSigmaEntriesAllexceptDeuTriHe3AlpTPC,eSigmaEntriesAllexceptDeuTriHe3AlpTPC);
-      eRejectionDeuTriHe3AlpTPCTOF[i] = GaussError(nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i],ePIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i],nSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF,eSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF);
+      eRejectionDeuteronTPC[i]        = GaussError((Double_t)nPIDEntriesAllexceptDeuteronTPC[i]       ,ePIDEntriesAllexceptDeuteronTPC[i]       ,(Double_t)nSigmaEntriesAllexceptDeuteronTPC    ,eSigmaEntriesAllexceptDeuteronTPC);
+      eRejectionDeuteronTPCTOF[i]     = GaussError((Double_t)nPIDEntriesAllexceptDeuteronTPCTOF[i]    ,ePIDEntriesAllexceptDeuteronTPCTOF[i]   ,(Double_t)nSigmaEntriesAllexceptDeuteronTPCTOF,eSigmaEntriesAllexceptDeuteronTPCTOF);
+      eRejectionTritonTPC[i]          = GaussError((Double_t)nPIDEntriesAllexceptTritonTPC[i]         ,ePIDEntriesAllexceptTritonTPC[i]         ,(Double_t)nSigmaEntriesAllexceptTritonTPC         ,eSigmaEntriesAllexceptTritonTPC);
+      eRejectionTritonTPCTOF[i]       = GaussError((Double_t)nPIDEntriesAllexceptTritonTPCTOF[i]      ,ePIDEntriesAllexceptTritonTPCTOF[i]      ,(Double_t)nSigmaEntriesAllexceptTritonTPCTOF   ,eSigmaEntriesAllexceptTritonTPCTOF);
+      eRejectionHelium3TPC[i]         = GaussError((Double_t)nPIDEntriesAllexceptHelium3TPC[i]        ,ePIDEntriesAllexceptHelium3TPC[i]        ,(Double_t)nSigmaEntriesAllexceptHelium3TPC       ,eSigmaEntriesAllexceptHelium3TPC);
+      eRejectionHelium3TPCTOF[i]      = GaussError((Double_t)nPIDEntriesAllexceptHelium3TPCTOF[i]     ,ePIDEntriesAllexceptHelium3TPCTOF[i]     ,(Double_t)nSigmaEntriesAllexceptHelium3TPCTOF ,eSigmaEntriesAllexceptHelium3TPCTOF);
+      eRejectionAlphaTPC[i]           = GaussError((Double_t)nPIDEntriesAllexceptAlphaTPC[i]          ,ePIDEntriesAllexceptAlphaTPC[i]          ,(Double_t)nSigmaEntriesAllexceptAlphaTPC          ,eSigmaEntriesAllexceptAlphaTPC);
+      eRejectionAlphaTPCTOF[i]        = GaussError((Double_t)nPIDEntriesAllexceptAlphaTPCTOF[i]       ,ePIDEntriesAllexceptAlphaTPCTOF[i]       ,(Double_t)nSigmaEntriesAllexceptAlphaTPCTOF     ,eSigmaEntriesAllexceptAlphaTPCTOF);
+      eRejectionHelium3AlphaTPC[i]    = GaussError((Double_t)nPIDEntriesAllexceptHelium3AlphaTPC[i]   ,ePIDEntriesAllexceptHelium3AlphaTPC[i],(Double_t)nSigmaEntriesAllexceptHelium3AlphaTPC,eSigmaEntriesAllexceptHelium3AlphaTPC);
+      eRejectionHelium3AlphaTPCTOF[i] = GaussError((Double_t)nPIDEntriesAllexceptHelium3AlphaTPCTOF[i],ePIDEntriesAllexceptHelium3AlphaTPCTOF[i],(Double_t)nSigmaEntriesAllexceptHelium3AlphaTPCTOF,eSigmaEntriesAllexceptHelium3AlphaTPCTOF);
+      eRejectionDeuTriHe3AlpTPC[i]    = GaussError((Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPC[i]   ,ePIDEntriesAllexceptDeuTriHe3AlpTPC[i],(Double_t)nSigmaEntriesAllexceptDeuTriHe3AlpTPC,eSigmaEntriesAllexceptDeuTriHe3AlpTPC);
+      eRejectionDeuTriHe3AlpTPCTOF[i] = GaussError((Double_t)nPIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i],ePIDEntriesAllexceptDeuTriHe3AlpTPCTOF[i],(Double_t)nSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF,eSigmaEntriesAllexceptDeuTriHe3AlpTPCTOF);
 
       errx[i]                          = 0.;
 
+
+      if(i==10){
       //cout <<"Deuteron rejection with TPC preselection and PID cut at "               << mMeanQRange[i] <<":\t("<< RejectionDeuteronTPC[i]       <<"\t+- "<<eRejectionDeuteronTPC[i]       <<")"<< endl;
-      //cout <<"Deuteron rejection with TPC&TOF preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< RejectionDeuteronTPCTOF[i]    <<"\t+- "<<eRejectionDeuteronTPCTOF[i]    <<")"<< endl;
+      cout <<"Deuteron rejection with TPC&TOF preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< RejectionDeuteronTPCTOF[i]    <<"\t+- "<<eRejectionDeuteronTPCTOF[i]    <<")"<< endl;
       //cout <<"Triton rejection with TPC preselection and PID cut at "                 << mMeanQRange[i] <<":\t("<< RejectionTritonTPC[i]         <<"\t+- "<<eRejectionTritonTPC[i]         <<")"<< endl;
-      //cout <<"Triton rejection with TPC&TOF preselection and PID cut at "             << mMeanQRange[i] <<":\t("<< RejectionTritonTPCTOF[i]      <<"\t+- "<<eRejectionTritonTPCTOF[i]      <<")"<< endl;
+      cout <<"Triton rejection with TPC&TOF preselection and PID cut at "             << mMeanQRange[i] <<":\t("<< RejectionTritonTPCTOF[i]      <<"\t+- "<<eRejectionTritonTPCTOF[i]      <<")"<< endl;
       //cout <<"Helium3 rejection with TPC preselection and PID cut at "                << mMeanQRange[i] <<":\t("<< RejectionHelium3TPC[i]        <<"\t+- "<<eRejectionHelium3TPC[i]        <<")"<< endl;
-      //cout <<"Helium3 rejection with TPC&TOF preselection and PID cut at "            << mMeanQRange[i] <<":\t("<< RejectionHelium3TPCTOF[i]     <<"\t+- "<<eRejectionHelium3TPCTOF[i]     <<")"<< endl;
+      cout <<"Helium3 rejection with TPC&TOF preselection and PID cut at "            << mMeanQRange[i] <<":\t("<< RejectionHelium3TPCTOF[i]     <<"\t+- "<<eRejectionHelium3TPCTOF[i]     <<")"<< endl;
       //cout <<"Alpha rejection with TPC preselection and PID cut at "                  << mMeanQRange[i] <<":\t("<< RejectionAlphaTPC[i]          <<"\t+- "<<eRejectionAlphaTPC[i]          <<")"<< endl;
-      //cout <<"Alpha rejection with TPC&TOF preselection and PID cut at "              << mMeanQRange[i] <<":\t("<< RejectionAlphaTPCTOF[i]       <<"\t+- "<<eRejectionAlphaTPCTOF[i]       <<")"<< endl;
+      cout <<"Alpha rejection with TPC&TOF preselection and PID cut at "              << mMeanQRange[i] <<":\t("<< RejectionAlphaTPCTOF[i]       <<"\t+- "<<eRejectionAlphaTPCTOF[i]       <<")"<< endl;
       //cout <<"Z=2 particle rejection with TPC preselection and PID cut at "           << mMeanQRange[i] <<":\t("<< RejectionHelium3AlphaTPC[i]   <<"\t+- "<<eRejectionHelium3AlphaTPC[i]   <<")"<< endl;
       //cout <<"Z=2 particle rejection with TPC&TOF preselection and PID cut at "       << mMeanQRange[i] <<":\t("<< RejectionHelium3AlphaTPCTOF[i]<<"\t+- "<<eRejectionHelium3AlphaTPCTOF[i]<<")"<< endl;
       //cout <<"d & t & He3 & Alpha rejection with TPC preselection and PID cut at "    << mMeanQRange[i] <<":\t("<< RejectionDeuteronTPC[i]       <<"\t+- "<<eRejectionDeuTriHe3AlpTPC[i]   <<")"<< endl;
-      //cout <<"d & t & He3 & Alpha rejection with TPC&TOF preselection and PID cut at "<< mMeanQRange[i] <<":\t("<< RejectionDeuteronTPCTOF[i]    <<"\t+- "<<eRejectionDeuTriHe3AlpTPCTOF[i]<<")"<< endl;
+      cout <<"d & t & He3 & Alpha rejection with TPC&TOF preselection and PID cut at "<< mMeanQRange[i] <<":\t("<< RejectionDeuteronTPCTOF[i]    <<"\t+- "<<eRejectionDeuTriHe3AlpTPCTOF[i]<<")"<< endl;
+      }
     }
 
 
     TGraphErrors *fRejectionDeuteronTPC = new TGraphErrors(m,mMeanQRange,RejectionDeuteronTPC,errx,eRejectionDeuteronTPC);
-    if(AllOrAnti == "All") fRejectionDeuteronTPC->SetTitle("Deuteron Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionDeuteronTPC->SetTitle("Anti-Deuteron Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionDeuteronTPC->SetTitle("Deuteron Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionDeuteronTPC->SetTitle("Anti-Deuteron Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionDeuteronTPC->SetMarkerStyle(7);
     fRejectionDeuteronTPC->SetMarkerColor(4);
     TGraphErrors *fRejectionDeuteronTPCTOF = new TGraphErrors(m,mMeanQRange,RejectionDeuteronTPCTOF,errx,eRejectionDeuteronTPCTOF);
-    if(AllOrAnti == "All") fRejectionDeuteronTPCTOF->SetTitle("Deuteron Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionDeuteronTPCTOF->SetTitle("Anti-Deuteron Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionDeuteronTPCTOF->SetTitle("Deuteron Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionDeuteronTPCTOF->SetTitle("Anti-Deuteron Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionDeuteronTPCTOF->SetMarkerStyle(7);
     fRejectionDeuteronTPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fRejectionTritonTPC = new TGraphErrors(m,mMeanQRange,RejectionTritonTPC,errx,eRejectionTritonTPC);
-    if(AllOrAnti == "All") fRejectionTritonTPC->SetTitle("Triton Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionTritonTPC->SetTitle("Anti-Triton Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionTritonTPC->SetTitle("Triton Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionTritonTPC->SetTitle("Anti-Triton Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionTritonTPC->SetMarkerStyle(7);
     fRejectionTritonTPC->SetMarkerColor(4);
     TGraphErrors *fRejectionTritonTPCTOF = new TGraphErrors(m,mMeanQRange,RejectionTritonTPCTOF,errx,eRejectionTritonTPCTOF);
-    if(AllOrAnti == "All") fRejectionTritonTPCTOF->SetTitle("Triton Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionTritonTPCTOF->SetTitle("Anti-Triton Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionTritonTPCTOF->SetTitle("Triton Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionTritonTPCTOF->SetTitle("Anti-Triton Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionTritonTPCTOF->SetMarkerStyle(7);
     fRejectionTritonTPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fRejectionHelium3TPC = new TGraphErrors(m,mMeanQRange,RejectionHelium3TPC,errx,eRejectionHelium3TPC);
-    if(AllOrAnti == "All") fRejectionHelium3TPC->SetTitle("Helium3 Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionHelium3TPC->SetTitle("Anti-Helium3 Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionHelium3TPC->SetTitle("Helium3 Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionHelium3TPC->SetTitle("Anti-Helium3 Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionHelium3TPC->SetMarkerStyle(7);
     fRejectionHelium3TPC->SetMarkerColor(4);
     TGraphErrors *fRejectionHelium3TPCTOF = new TGraphErrors(m,mMeanQRange,RejectionHelium3TPCTOF,errx,eRejectionHelium3TPCTOF);
-    if(AllOrAnti == "All") fRejectionHelium3TPCTOF->SetTitle("Helium3 Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionHelium3TPCTOF->SetTitle("Anti-Helium3 Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionHelium3TPCTOF->SetTitle("Helium3 Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionHelium3TPCTOF->SetTitle("Anti-Helium3 Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionHelium3TPCTOF->SetMarkerStyle(7);
     fRejectionHelium3TPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fRejectionAlphaTPC = new TGraphErrors(m,mMeanQRange,RejectionAlphaTPC,errx,eRejectionAlphaTPC);
-    if(AllOrAnti == "All") fRejectionAlphaTPC->SetTitle("Alpha Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionAlphaTPC->SetTitle("Anti-Alpha Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionAlphaTPC->SetTitle("Alpha Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionAlphaTPC->SetTitle("Anti-Alpha Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionAlphaTPC->SetMarkerStyle(7);
     fRejectionAlphaTPC->SetMarkerColor(4);
     TGraphErrors *fRejectionAlphaTPCTOF = new TGraphErrors(m,mMeanQRange,RejectionAlphaTPCTOF,errx,eRejectionAlphaTPCTOF);
-    if(AllOrAnti == "All") fRejectionAlphaTPCTOF->SetTitle("Alpha Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionAlphaTPCTOF->SetTitle("Anti-Alpha Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionAlphaTPCTOF->SetTitle("Alpha Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionAlphaTPCTOF->SetTitle("Anti-Alpha Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionAlphaTPCTOF->SetMarkerStyle(7);
     fRejectionAlphaTPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fRejectionHelium3AlphaTPC = new TGraphErrors(m,mMeanQRange,RejectionHelium3AlphaTPC,errx,eRejectionHelium3AlphaTPC);
-    if(AllOrAnti == "All") fRejectionHelium3AlphaTPC->SetTitle("Z=2 Particle Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionHelium3AlphaTPC->SetTitle("Z=2 Anti-Particle Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionHelium3AlphaTPC->SetTitle("Z=2 Particle Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionHelium3AlphaTPC->SetTitle("Z=2 Anti-Particle Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionHelium3AlphaTPC->SetMarkerStyle(7);
     fRejectionHelium3AlphaTPC->SetMarkerColor(4);
     TGraphErrors *fRejectionHelium3AlphaTPCTOF = new TGraphErrors(m,mMeanQRange,RejectionHelium3AlphaTPCTOF,errx,eRejectionHelium3AlphaTPCTOF);
-    if(AllOrAnti == "All") fRejectionHelium3AlphaTPCTOF->SetTitle("Z=2 Particle Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionHelium3AlphaTPCTOF->SetTitle("Z=2 Anti-Particle Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionHelium3AlphaTPCTOF->SetTitle("Z=2 Particle Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionHelium3AlphaTPCTOF->SetTitle("Z=2 Anti-Particle Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionHelium3AlphaTPCTOF->SetMarkerStyle(7);
     fRejectionHelium3AlphaTPCTOF->SetMarkerColor(4);
 
     TGraphErrors *fRejectionDeuTriHe3AlpTPC = new TGraphErrors(m,mMeanQRange,RejectionDeuTriHe3AlpTPC,errx,eRejectionDeuTriHe3AlpTPC);
-    if(AllOrAnti == "All") fRejectionDeuTriHe3AlpTPC->SetTitle("d & t & He3 & Alpha Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionDeuTriHe3AlpTPC->SetTitle("Anti-d & -t & -He3 & -Alpha Rejection (TPC ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionDeuTriHe3AlpTPC->SetTitle("d & t & He3 & Alpha Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionDeuTriHe3AlpTPC->SetTitle("Anti-d & -t & -He3 & -Alpha Rejection (TPC ps);<Q_{s}> (arb. units);Rejection");
     fRejectionDeuTriHe3AlpTPC->SetMarkerStyle(7);
     fRejectionDeuTriHe3AlpTPC->SetMarkerColor(4);
     TGraphErrors *fRejectionDeuTriHe3AlpTPCTOF = new TGraphErrors(m,mMeanQRange,RejectionDeuTriHe3AlpTPCTOF,errx,eRejectionDeuTriHe3AlpTPCTOF);
-    if(AllOrAnti == "All") fRejectionDeuTriHe3AlpTPCTOF->SetTitle("d & t & He3 & Alpha Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
-    if(AllOrAnti == "Anti")fRejectionDeuTriHe3AlpTPCTOF->SetTitle("Anti-d & -t & -He3 & -Alpha Rejection (TPC&TOF ps);<Q_{s}> (a.u.);Rejection");
+    if(AllOrAnti == "All") fRejectionDeuTriHe3AlpTPCTOF->SetTitle("d & t & He3 & Alpha Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
+    if(AllOrAnti == "Anti")fRejectionDeuTriHe3AlpTPCTOF->SetTitle("Anti-d & -t & -He3 & -Alpha Rejection (TPC&TOF ps);<Q_{s}> (arb. units);Rejection");
     fRejectionDeuTriHe3AlpTPCTOF->SetMarkerStyle(7);
     fRejectionDeuTriHe3AlpTPCTOF->SetMarkerColor(4);
 
@@ -1076,10 +1144,13 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   /// Create legends
   ///_________________
   // legends for cd(1)
-  TLegend *legPID = new TLegend(.02,.68,.45,.88);
+  TLegend *legPID;
+  if((pTCut == 2. && Tracklets == "") || (pTCut != 2. && Tracklets != "")) legPID = new TLegend(.05,.61,.42,.85);
+  else if (pTCut == 2. && Tracklets != "") legPID = new TLegend(.05,.53,.42,.85);
+  else                                     legPID = new TLegend(.05,.68,.42,.85);
   legPID->SetFillStyle(0);
   legPID->SetBorderSize(0);
-  if(Collisions == "PbPb_11h" || Collisions == "PbPb_11hStd") {
+  if(Collisions == "PbPb_11h" || Collisions == "PbPb_11hStd" || Collisions == "PbPb_11h_tracklets") {
     legPID->AddEntry((TObject*)0,"Pb-Pb, #sqrt{s_{NN}} = 2.76 TeV","");
     legPID->AddEntry((TObject*)0,"run LHC11h pass2","");
   }
@@ -1091,64 +1162,71 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     legPID->AddEntry((TObject*)0,"p-Pb, #sqrt{s_{NN}} = 5.023 TeV","");
     legPID->AddEntry((TObject*)0,"run LHC13c pass2","");
   }
-  else { //(Collisions == "pp_15f")
-    legPID->AddEntry((TObject*)0,"p-p, #sqrt{s}} = 13 TeV","");
+  else { //else if(Collisions == "pp_15f") {
+    legPID->AddEntry((TObject*)0,"p-p, #sqrt{s} = 13 TeV","");
     legPID->AddEntry((TObject*)0,"run LHC15f pass2","");
   }
+  if(pTCut == 2. && Tracklets == "")       legPID->AddEntry((TObject*)0,"#frac{#it{p}_{T}}{#it{Z}} < 2 GeV/#it{c}","");
+  else if(pTCut != 2. && Tracklets != "") legPID->AddEntry((TObject*)0,Form("%.f tracklet tracks",fnTrkl),"");
+  else if(pTCut == 2. && Tracklets != "") {
+    legPID->AddEntry((TObject*)0,"#frac{#it{p}_{T}}{#it{Z}} < 2 GeV/#it{c}","");
+    legPID->AddEntry((TObject*)0,Form("%.f tracklet tracks",fnTrkl),"");
+  }
+
 
   // legends for cd(2)
   TLegend *legPIDDeuteronTPC = new TLegend(.05,.68,.4,.85);
   legPIDDeuteronTPC->SetFillStyle(0);
   legPIDDeuteronTPC->SetBorderSize(0);
   legPIDDeuteronTPC->AddEntry((TObject*)0,"with preselection:","");
-  legPIDDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
+  legPIDDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
   TLegend *legPIDDeuteronTPCTOF = new TLegend(.05,.63,.4,.85);
   legPIDDeuteronTPCTOF->SetFillStyle(0);
   legPIDDeuteronTPCTOF->SetBorderSize(0);
   legPIDDeuteronTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
+  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
   TLegend *legPIDTritonTPC = new TLegend(.05,.68,.4,.85);
   legPIDTritonTPC->SetFillStyle(0);
   legPIDTritonTPC->SetBorderSize(0);
   legPIDTritonTPC->AddEntry((TObject*)0,"with preselection:","");
-  legPIDTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
+  legPIDTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
   TLegend *legPIDTritonTPCTOF = new TLegend(.05,.63,.4,.85);
   legPIDTritonTPCTOF->SetFillStyle(0);
   legPIDTritonTPCTOF->SetBorderSize(0);
   legPIDTritonTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
+  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legPIDTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
   TLegend *legPIDDeuTriHe3AlpTPC = new TLegend(.05,.63,.45,.85);
   legPIDDeuTriHe3AlpTPC->SetFillStyle(0);
   legPIDDeuTriHe3AlpTPC->SetBorderSize(0);
   legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,"with preselection:","");
-  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
-  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
+  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
+  legPIDDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
   TLegend *legPIDDeuTriHe3AlpTPCTOF = new TLegend(.05,.58,.45,.85);
   legPIDDeuTriHe3AlpTPCTOF->SetFillStyle(0);
   legPIDDeuTriHe3AlpTPCTOF->SetBorderSize(0);
   legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
-  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
+  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
+  legPIDDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
   TLegend *legPIDTPC = new TLegend(.05,.73,.4,.85);
   legPIDTPC->SetFillStyle(0);
   legPIDTPC->SetBorderSize(0);
   legPIDTPC->AddEntry((TObject*)0,"with preselection:","");
-  legPIDTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
+  legPIDTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
   TLegend *legPIDTPCTOF = new TLegend(.05,.67,.4,.85);
   legPIDTPCTOF->SetFillStyle(0);
   legPIDTPCTOF->SetBorderSize(0);
   legPIDTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legPIDTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legPIDTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
+  legPIDTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legPIDTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
 
   // legends for cd(3)
   TLegend *legProjDeuteronTPC = new TLegend(.45,.63,.8,.85);
@@ -1157,105 +1235,105 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   if(AllOrAnti == "All") legProjDeuteronTPC->AddEntry(fHistTRDPIDDeuteronTPC_clear_Clone,"Deuteron","l");
   if(AllOrAnti == "Anti")legProjDeuteronTPC->AddEntry(fHistTRDPIDDeuteronTPC_clear_Clone,"Anti-Deuteron","l");
   legProjDeuteronTPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
+  legProjDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
   TLegend *legProjDeuteronTPCTOF = new TLegend(.45,.58,.8,.85);
   legProjDeuteronTPCTOF->SetFillStyle(0);
   legProjDeuteronTPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjDeuteronTPCTOF->AddEntry(fHistTRDPIDDeuteronTPCTOF_clear_Clone,"Deuteron","l");
   if(AllOrAnti == "Anti")legProjDeuteronTPCTOF->AddEntry(fHistTRDPIDDeuteronTPCTOF_clear_Clone,"Anti-Deuteron","l");
   legProjDeuteronTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
+  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legProjDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
   TLegend *legProjTritonTPC = new TLegend(.55,.6,.9,.82);
   legProjTritonTPC->SetFillStyle(0);
   legProjTritonTPC->SetBorderSize(0);
   if(AllOrAnti == "All") legProjTritonTPC->AddEntry(fHistTRDPIDTritonTPC_clear_Clone,"Triton","l");
   if(AllOrAnti == "Anti")legProjTritonTPC->AddEntry(fHistTRDPIDTritonTPC_clear_Clone,"Anti-Triton","l");
   legProjTritonTPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
+  legProjTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
   TLegend *legProjTritonTPCTOF = new TLegend(.55,.55,.9,.82);
   legProjTritonTPCTOF->SetFillStyle(0);
   legProjTritonTPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjTritonTPCTOF->AddEntry(fHistTRDPIDTritonTPCTOF_clear_Clone,"Triton","l");
   if(AllOrAnti == "Anti")legProjTritonTPCTOF->AddEntry(fHistTRDPIDTritonTPCTOF_clear_Clone,"Anti-Triton","l");
   legProjTritonTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
+  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legProjTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
   TLegend *legProjHelium3TPC = new TLegend(.12,.67,.47,.85);
   legProjHelium3TPC->SetFillStyle(0);
   legProjHelium3TPC->SetBorderSize(0);
   if(AllOrAnti == "All") legProjHelium3TPC->AddEntry(fHistTRDPIDHelium3TPC_Clone,"Helium3","l");
   if(AllOrAnti == "Anti")legProjHelium3TPC->AddEntry(fHistTRDPIDHelium3TPC_Clone,"Anti-Helium3","l");
   legProjHelium3TPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjHelium3TPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
+  legProjHelium3TPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjHelium3TPCTOF = new TLegend(.1,.61,.45,.85);
   legProjHelium3TPCTOF->SetFillStyle(0);
   legProjHelium3TPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjHelium3TPCTOF->AddEntry(fHistTRDPIDHelium3TPCTOF_Clone,"Helium3","l");
   if(AllOrAnti == "Anti")legProjHelium3TPCTOF->AddEntry(fHistTRDPIDHelium3TPCTOF_Clone,"Anti-Helium3","l");
   legProjHelium3TPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjHelium3TPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjHelium3TPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
+  legProjHelium3TPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjHelium3TPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjAlphaTPC = new TLegend(.45,.67,.8,.85);
   legProjAlphaTPC->SetFillStyle(0);
   legProjAlphaTPC->SetBorderSize(0);
   if(AllOrAnti == "All") legProjAlphaTPC->AddEntry(fHistTRDPIDAlphaTPC_Clone,"Alpha","l");
   if(AllOrAnti == "Anti")legProjAlphaTPC->AddEntry(fHistTRDPIDAlphaTPC_Clone,"Anti-Alpha","l");
   legProjAlphaTPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjAlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
+  legProjAlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjAlphaTPCTOF = new TLegend(.12,.61,.47,.85);
   legProjAlphaTPCTOF->SetFillStyle(0);
   legProjAlphaTPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjAlphaTPCTOF->AddEntry(fHistTRDPIDAlphaTPCTOF_Clone,"Alpha","l");
   if(AllOrAnti == "Anti")legProjAlphaTPCTOF->AddEntry(fHistTRDPIDAlphaTPCTOF_Clone,"Anti-Alpha","l");
   legProjAlphaTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjAlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjAlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
+  legProjAlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjAlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjHelium3AlphaTPC = new TLegend(.12,.67,.47,.85);
   legProjHelium3AlphaTPC->SetFillStyle(0);
   legProjHelium3AlphaTPC->SetBorderSize(0);
   if(AllOrAnti == "All") legProjHelium3AlphaTPC->AddEntry(fHistTRDPIDHelium3AlphaTPC_Clone,"Helium3 & Alpha","l");
   if(AllOrAnti == "Anti")legProjHelium3AlphaTPC->AddEntry(fHistTRDPIDHelium3AlphaTPC_Clone,"Anti-Helium3 & -Alpha","l");
   legProjHelium3AlphaTPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjHelium3AlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
+  legProjHelium3AlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjHelium3AlphaTPCTOF = new TLegend(.1,.61,.45,.85);
   legProjHelium3AlphaTPCTOF->SetFillStyle(0);
   legProjHelium3AlphaTPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjHelium3AlphaTPCTOF->AddEntry(fHistTRDPIDHelium3AlphaTPCTOF_Clone,"Helium3 & Alpha","l");
   if(AllOrAnti == "Anti")legProjHelium3AlphaTPCTOF->AddEntry(fHistTRDPIDHelium3AlphaTPCTOF_Clone,"Anti-Helium3 & -Alpha","l");
   legProjHelium3AlphaTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
+  legProjHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
   TLegend *legProjDeuTriHe3AlpTPC = new TLegend(.38,.45,.78,.85);
   legProjDeuTriHe3AlpTPC->SetFillStyle(0);
   legProjDeuTriHe3AlpTPC->SetBorderSize(0);
   if(AllOrAnti == "All") legProjDeuTriHe3AlpTPC->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC_Clone,"d & t & He3 & Alpha","l");
   if(AllOrAnti == "Anti")legProjDeuTriHe3AlpTPC->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC_Clone,"#bar{d} & #bar{t} & {}^{3}#bar{He} & #bar{#alpha}","l");
   legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,"with preselection:","");
-  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
-  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
+  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
+  legProjDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
   TLegend *legProjDeuTriHe3AlpTPCTOF = new TLegend(.38,.39,.78,.85);
   legProjDeuTriHe3AlpTPCTOF->SetFillStyle(0);
   legProjDeuTriHe3AlpTPCTOF->SetBorderSize(0);
   if(AllOrAnti == "All") legProjDeuTriHe3AlpTPCTOF->AddEntry(fHistTRDPIDDeuTriHe3AlpTPCTOF_Clone,"d & t & He3 & Alpha","l");
   if(AllOrAnti == "Anti")legProjDeuTriHe3AlpTPCTOF->AddEntry(fHistTRDPIDDeuTriHe3AlpTPCTOF_Clone,"#bar{d} & #bar{t} & {}^{3}#bar{He} & #bar{#alpha}","l");
   legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
-  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
+  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
+  legProjDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
 
   // legends for cd(4)
   TLegend *legMeanallDeuteronTPC = new TLegend(.15,.7,.45,.9);
   legMeanallDeuteronTPC->SetFillStyle(0);
   legMeanallDeuteronTPC->SetBorderSize(0);
   legMeanallDeuteronTPC->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAllexceptDeuteronTPC_clear->GetMean()),"");
-  if(AllOrAnti == "All") TLegend *legMeanDeuteronTPC = new TLegend(.17,.36,.47,.56);
+  if(AllOrAnti == "All") TLegend *legMeanDeuteronTPC = new TLegend(.19,.38,.49,.58);
   if(AllOrAnti == "Anti")TLegend *legMeanDeuteronTPC = new TLegend(.26,.36,.56,.56);
   legMeanDeuteronTPC->SetFillStyle(0);
   legMeanDeuteronTPC->SetBorderSize(0);
@@ -1280,7 +1358,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legMeanallTritonTPC->SetFillStyle(0);
   legMeanallTritonTPC->SetBorderSize(0);
   legMeanallTritonTPC->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAllexceptTritonTPC_clear->GetMean()),"");
-  if(AllOrAnti == "All") TLegend *legMeanTritonTPC = new TLegend(.3,.24,.62,.44);
+  if(AllOrAnti == "All") TLegend *legMeanTritonTPC = new TLegend(.3,.26,.62,.46);
   if(AllOrAnti == "Anti")TLegend *legMeanTritonTPC = new TLegend(.34,.34,.66,.54);
   legMeanTritonTPC->SetFillStyle(0);
   legMeanTritonTPC->SetBorderSize(0);
@@ -1328,7 +1406,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legMeanallAlphaTPC->SetFillStyle(0);
   legMeanallAlphaTPC->SetBorderSize(0);
   legMeanallAlphaTPC->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAllexceptAlphaTPC->GetMean()),"");
-  TLegend *legMeanAlphaTPC = new TLegend(.32,.3,.64,.5);
+  TLegend *legMeanAlphaTPC = new TLegend(.32,.45,.64,.65);
   legMeanAlphaTPC->SetFillStyle(0);
   legMeanAlphaTPC->SetBorderSize(0);
   legMeanAlphaTPC->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAlphaTPC_Clone2->GetMean()),"");
@@ -1336,7 +1414,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legMeanallAlphaTPCTOF->SetFillStyle(0);
   legMeanallAlphaTPCTOF->SetBorderSize(0);
   legMeanallAlphaTPCTOF->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAllexceptAlphaTPCTOF->GetMean()),"");
-  TLegend *legMeanAlphaTPCTOF = new TLegend(.54,.27,.86,.47);
+  TLegend *legMeanAlphaTPCTOF = new TLegend(.35,.27,.67,.47);
   legMeanAlphaTPCTOF->SetFillStyle(0);
   legMeanAlphaTPCTOF->SetBorderSize(0);
   legMeanAlphaTPCTOF->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDAlphaTPCTOF_Clone2->GetMean()),"");
@@ -1388,12 +1466,19 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legMeanDeuTriHe3AlpTPCTOF->SetFillStyle(0);
   legMeanDeuTriHe3AlpTPCTOF->SetBorderSize(0);
   legMeanDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("Mean = %.2f",fHistTRDPIDDeuTriHe3AlpTPCTOF->GetMean()),"");
-  TLegend *legParticleDeuTriHe3Alp = new TLegend(.5,.45,.85,.82);
+  TLegend *legParticleDeuTriHe3Alp = new TLegend(.5,.55,.85,.73);
   legParticleDeuTriHe3Alp->SetFillStyle(0);
   legParticleDeuTriHe3Alp->SetBorderSize(0);
-  if(AllOrAnti == "All") legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC,"#splitline{d, #bar{d}, t, #bar{t},}{{}^{3}He,{}^{3}#bar{He}, #alpha, #bar{#alpha}}","l");
+  //if(AllOrAnti == "All") legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC,"#splitline{d, #bar{d}, t, #bar{t},}{{}^{3}He,{}^{3}#bar{He}, #alpha, #bar{#alpha}}","l");
+  //if(AllOrAnti == "All") legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC,"{}^{2}H, {}^{3}H, {}^{3}He, {}^{4}He","l");
+  if(AllOrAnti == "All") legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC," d,  t, {}^{3}He, {}^{4}He","l");
   if(AllOrAnti == "Anti")legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDDeuTriHe3AlpTPC,"#bar{d}, #bar{t},{}^{3}#bar{He}, #bar{#alpha}","l");
-  legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDAllexceptDeuTriHe3AlpTPC,"else","l");
+  legParticleDeuTriHe3Alp->AddEntry(fHistTRDPIDAllexceptDeuTriHe3AlpTPC,"all other tracks","l");
+
+  TLegend *legColl = new TLegend(.4,.73,.85,.85);
+  legColl->SetFillStyle(0);
+  legColl->SetBorderSize(0);
+  legColl->AddEntry((TObject*)0,"Pb-Pb, #sqrt{#it{s}_{NN}} = 2.76 TeV","");
 
   // legends for cd(5)
   TLegend *legPIDCutPurDeuteronTPC = new TLegend(.01,y1,.54,.88);
@@ -1402,7 +1487,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutPurDeuteronTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutPurDeuteronTPC->AddEntry((TObject*)0,"Deuteron purity for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutPurDeuteronTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.5f #pm %.5f",Deu + i*10,PurityDeuteronTPC[nDeu + i],ePurityDeuteronTPC[nDeu + i]),"");
+    legPIDCutPurDeuteronTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.4f #pm %.4f",Deu + i*10,PurityDeuteronTPC[nDeu + i],ePurityDeuteronTPC[nDeu + i]),"");
   }
   TLegend *legPIDCutPurDeuteronTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutPurDeuteronTPCTOF->SetFillStyle(0);
@@ -1418,7 +1503,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutPurTritonTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutPurTritonTPC->AddEntry((TObject*)0,"Triton purity for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutPurTritonTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.5f #pm %.5f",Tri + i*10,PurityTritonTPC[nTri + i],ePurityTritonTPC[nTri + i]),"");
+    legPIDCutPurTritonTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.4f #pm %.4f",Tri + i*10,PurityTritonTPC[nTri + i],ePurityTritonTPC[nTri + i]),"");
   }
   TLegend *legPIDCutPurTritonTPCTOF = new TLegend(.01,y1,.54,.88);
   legPIDCutPurTritonTPCTOF->SetFillStyle(0);
@@ -1432,9 +1517,10 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutPurHelium3TPC->SetFillStyle(0);
   legPIDCutPurHelium3TPC->SetBorderSize(0);
   legPIDCutPurHelium3TPC->AddEntry((TObject*)0,"Possible candidates:","");
-  legPIDCutPurHelium3TPC->AddEntry((TObject*)0,"Helium3 purity for <Q_{s}> cuts at:","");
+  //legPIDCutPurHelium3TPC->AddEntry((TObject*)0,"^{3}He, ^{3}#bar{He} purity for <Q_{s}> cuts at:","");
+  legPIDCutPurHelium3TPC->AddEntry((TObject*)0,"purity for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutPurHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3 + i*10,PurityHelium3TPC[nHe3 + i],ePurityHelium3TPC[nHe3 + i]),"");
+    legPIDCutPurHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.5f #pm %.5f",He3 + i*10,PurityHelium3TPC[nHe3 + i],ePurityHelium3TPC[nHe3 + i]),"");
   }
   TLegend *legPIDCutPurHelium3TPCTOF = new TLegend(.01,y1,.54,.88);
   legPIDCutPurHelium3TPCTOF->SetFillStyle(0);
@@ -1458,7 +1544,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutPurAlphaTPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutPurAlphaTPCTOF->AddEntry((TObject*)0,"Alpha purity for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutPurAlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Alp + i*10,PurityAlphaTPCTOF[nAlp + i],ePurityAlphaTPCTOF[nAlp + i]),"");
+    legPIDCutPurAlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.5f #pm %.5f",Alp + i*10,PurityAlphaTPCTOF[nAlp + i],ePurityAlphaTPCTOF[nAlp + i]),"");
   }
   TLegend *legPIDCutPurHelium3AlphaTPC = new TLegend(.01,y1,.54,.88);
   legPIDCutPurHelium3AlphaTPC->SetFillStyle(0);
@@ -1476,14 +1562,14 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   for(Int_t i = 0; i < nopc; i++) {
     legPIDCutPurHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3Alp + i*10,PurityHelium3AlphaTPCTOF[nHe3Alp + i],ePurityHelium3AlphaTPCTOF[nHe3Alp + i]),"");
   }
-  TLegend *legPIDCutPurDeuTriHe3AlpTPC = new TLegend(.01,y1,.54,.88);
+  TLegend *legPIDCutPurDeuTriHe3AlpTPC = new TLegend(.01,y1,.66,.88);
   legPIDCutPurDeuTriHe3AlpTPC->SetFillStyle(0);
   legPIDCutPurDeuTriHe3AlpTPC->SetBorderSize(0);
   legPIDCutPurDeuTriHe3AlpTPC->AddEntry((TObject*)0,"Possible candidates:","");
   if(AllOrAnti == "All") legPIDCutPurDeuTriHe3AlpTPC->AddEntry((TObject*)0,"d & t & He3 & #alpha purity for <Q_{s}> cuts at:","");
   if(AllOrAnti == "Anti")legPIDCutPurDeuTriHe3AlpTPC->AddEntry((TObject*)0,"#bar{d} & #bar{t} & {}^{3}#bar{He} & #bar{#alpha} purity for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutPurDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",DeuTriHe3Alp + i*10,PurityDeuTriHe3AlpTPC[nDeuTriHe3Alp + i],ePurityDeuTriHe3AlpTPC[nDeuTriHe3Alp + i]),"");
+    legPIDCutPurDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.4f #pm %.4f",DeuTriHe3Alp + i*10,PurityDeuTriHe3AlpTPC[nDeuTriHe3Alp + i],ePurityDeuTriHe3AlpTPC[nDeuTriHe3Alp + i]),"");
   }
   TLegend *legPIDCutPurDeuTriHe3AlpTPCTOF = new TLegend(.01,y1,.54,.88);
   legPIDCutPurDeuTriHe3AlpTPCTOF->SetFillStyle(0);
@@ -1499,74 +1585,74 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legnSigmaCutDeuteronTPC->SetFillStyle(0);
   legnSigmaCutDeuteronTPC->SetBorderSize(0);
   legnSigmaCutDeuteronTPC->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
+  legnSigmaCutDeuteronTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuteronTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPC),"");
   TLegend *legnSigmaCutDeuteronTPCTOF = new TLegend(.05,.13,.4,.36);  // same for cd(5,7,8,9)
   legnSigmaCutDeuteronTPCTOF->SetFillStyle(0);
   legnSigmaCutDeuteronTPCTOF->SetBorderSize(0);
   legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
+  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuteronTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutDeuteronTPCTOF),"");
   TLegend *legnSigmaCutTritonTPC = new TLegend(.05,.13,.4,.31);  // same for cd(5,7,8,9)
   legnSigmaCutTritonTPC->SetFillStyle(0);
   legnSigmaCutTritonTPC->SetBorderSize(0);
   legnSigmaCutTritonTPC->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
+  legnSigmaCutTritonTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutTritonTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPC),"");
   TLegend *legnSigmaCutTritonTPCTOF = new TLegend(.05,.13,.4,.36);  // same for cd(5,7,8,9)
   legnSigmaCutTritonTPCTOF->SetFillStyle(0);
   legnSigmaCutTritonTPCTOF->SetBorderSize(0);
   legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
+  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutTritonTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c}",ClearCutTritonTPCTOF),"");
   TLegend *legnSigmaCutHelium3AlphaTPC = new TLegend(.05,.13,.4,.25);  // same for cd(5,7,8,9)
   legnSigmaCutHelium3AlphaTPC->SetFillStyle(0);
   legnSigmaCutHelium3AlphaTPC->SetBorderSize(0);
   legnSigmaCutHelium3AlphaTPC->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutHelium3AlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
+  legnSigmaCutHelium3AlphaTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
   TLegend *legnSigmaCutHelium3AlphaTPCTOF = new TLegend(.05,.13,.4,.31);  // same for cd(5,7,8,9)
   legnSigmaCutHelium3AlphaTPCTOF->SetFillStyle(0);
   legnSigmaCutHelium3AlphaTPCTOF->SetBorderSize(0);
   legnSigmaCutHelium3AlphaTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
+  legnSigmaCutHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
   TLegend *legnSigmaCutDeuTriHe3AlpTPC = new TLegend(.05,.13,.4,.36);  // same for cd(5,7,8,9)
   legnSigmaCutDeuTriHe3AlpTPC->SetFillStyle(0);
   legnSigmaCutDeuTriHe3AlpTPC->SetBorderSize(0);
   legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
-  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
-  TLegend *legnSigmaCutDeuTriHe3AlpTPC9 = new TLegend(.53,.13,.88,.36);  // same for cd(5,7,8,9)
+  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
+  legnSigmaCutDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
+  TLegend *legnSigmaCutDeuTriHe3AlpTPC9 = new TLegend(.53,.13,.88,.36);  // only for cd(9)
   legnSigmaCutDeuTriHe3AlpTPC9->SetFillStyle(0);
   legnSigmaCutDeuTriHe3AlpTPC9->SetBorderSize(0);
   legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
-  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
+  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPC),"");
+  legnSigmaCutDeuTriHe3AlpTPC9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPC),"");
   TLegend *legnSigmaCutDeuTriHe3AlpTPCTOF = new TLegend(.05,.13,.4,.42);  // same for cd(5,7,8,9)
   legnSigmaCutDeuTriHe3AlpTPCTOF->SetFillStyle(0);
   legnSigmaCutDeuTriHe3AlpTPCTOF->SetBorderSize(0);
   legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
-  TLegend *legnSigmaCutDeuTriHe3AlpTPCTOF9 = new TLegend(.53,.13,.88,.42);  // same for cd(5,7,8,9)
+  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
+  TLegend *legnSigmaCutDeuTriHe3AlpTPCTOF9 = new TLegend(.53,.13,.88,.42);  // only for cd(9)
   legnSigmaCutDeuTriHe3AlpTPCTOF9->SetFillStyle(0);
   legnSigmaCutDeuTriHe3AlpTPCTOF9->SetBorderSize(0);
   legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,"with preselection:","");
-  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|TPCnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|TOFnSigma| = %i#sigma",Sigma),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
-  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|TPCnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|TOFnSigma| < %i#sigma",Sigma),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for d",ClearCutDeuteronTPCTOF),"");
+  legnSigmaCutDeuTriHe3AlpTPCTOF9->AddEntry((TObject*)0,Form("|#frac{#it{p}}{#it{Z}}| < %.1f GeV/#it{c} for t",ClearCutTritonTPCTOF),"");
 
   // legends for cd(6)
 
   // legends for cd(7)
-  TLegend *legPIDCutEffDeuteronTPC = new TLegend(.36,y1,.89,.88);
+  TLegend *legPIDCutEffDeuteronTPC = new TLegend(.3,y1,.89,.88);
   legPIDCutEffDeuteronTPC->SetFillStyle(0);
   legPIDCutEffDeuteronTPC->SetBorderSize(0);
   legPIDCutEffDeuteronTPC->AddEntry((TObject*)0,"Possible candidates:","");
@@ -1602,9 +1688,10 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutEffHelium3TPC->SetFillStyle(0);
   legPIDCutEffHelium3TPC->SetBorderSize(0);
   legPIDCutEffHelium3TPC->AddEntry((TObject*)0,"Possible candidates:","");
-  legPIDCutEffHelium3TPC->AddEntry((TObject*)0,"Helium3 efficiency for <Q_{s}> cuts at:","");
+  //legPIDCutEffHelium3TPC->AddEntry((TObject*)0,"^{3}He, ^{3}#bar{He} efficiency for <Q_{s}> cuts at:","");
+  legPIDCutEffHelium3TPC->AddEntry((TObject*)0,"efficiency for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutEffHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.3f #pm %.3f",He3 + i*10,EfficiencyHelium3TPC[mHe3 + i],eEfficiencyHelium3TPC[mHe3 + i]),"");
+    legPIDCutEffHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.2f #pm %.2f",He3 + i*10,EfficiencyHelium3TPC[mHe3 + i],eEfficiencyHelium3TPC[mHe3 + i]),"");
   }
   TLegend *legPIDCutEffHelium3TPCTOF = new TLegend(.36,y1,.89,.88);
   legPIDCutEffHelium3TPCTOF->SetFillStyle(0);
@@ -1620,7 +1707,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutEffAlphaTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutEffAlphaTPC->AddEntry((TObject*)0,"Alpha efficiency for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutEffAlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.3f #pm %.3f",Alp + i*10,EfficiencyAlphaTPC[mAlp + i],eEfficiencyAlphaTPC[mAlp + i]),"");
+    legPIDCutEffAlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.2f #pm %.2f",Alp + i*10,EfficiencyAlphaTPC[mAlp + i],eEfficiencyAlphaTPC[mAlp + i]),"");
   }
   TLegend *legPIDCutEffAlphaTPCTOF = new TLegend(.36,y1,.89,.88);
   legPIDCutEffAlphaTPCTOF->SetFillStyle(0);
@@ -1646,7 +1733,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   for(Int_t i = 0; i < nopc; i++) {
     legPIDCutEffHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.3f #pm %.3f",He3Alp + i*10,EfficiencyHelium3AlphaTPCTOF[mHe3Alp + i],eEfficiencyHelium3AlphaTPCTOF[mHe3Alp + i]),"");
   }
-  TLegend *legPIDCutEffDeuTriHe3AlpTPC = new TLegend(.36,y1,.89,.88);
+  TLegend *legPIDCutEffDeuTriHe3AlpTPC = new TLegend(.2,y1,.89,.88);
   legPIDCutEffDeuTriHe3AlpTPC->SetFillStyle(0);
   legPIDCutEffDeuTriHe3AlpTPC->SetBorderSize(0);
   legPIDCutEffDeuTriHe3AlpTPC->AddEntry((TObject*)0,"Possible candidates:","");
@@ -1672,7 +1759,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejDeuteronTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejDeuteronTPC->AddEntry((TObject*)0,"Deuteron rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejDeuteronTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Deu + i*10,RejectionDeuteronTPC[mDeu + i],eRejectionDeuteronTPC[mDeu + i]),"");
+    legPIDCutRejDeuteronTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Deu + i*10,RejectionDeuteronTPC[mDeu + i],eRejectionDeuteronTPC[mDeu + i]),"");
   }
   TLegend *legPIDCutRejDeuteronTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejDeuteronTPCTOF->SetFillStyle(0);
@@ -1680,7 +1767,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejDeuteronTPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejDeuteronTPCTOF->AddEntry((TObject*)0,"Deuteron rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejDeuteronTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Deu + i*10,RejectionDeuteronTPCTOF[mDeu + i],eRejectionDeuteronTPCTOF[mDeu + i]),"");
+    legPIDCutRejDeuteronTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Deu + i*10,RejectionDeuteronTPCTOF[mDeu + i],eRejectionDeuteronTPCTOF[mDeu + i]),"");
   }
   TLegend *legPIDCutRejTritonTPC = new TLegend(.35,y1,.88,.88);
   legPIDCutRejTritonTPC->SetFillStyle(0);
@@ -1688,7 +1775,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejTritonTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejTritonTPC->AddEntry((TObject*)0,"Triton rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejTritonTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Tri + i*10,RejectionTritonTPC[mTri + i],eRejectionTritonTPC[mTri + i]),"");
+    legPIDCutRejTritonTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Tri + i*10,RejectionTritonTPC[mTri + i],eRejectionTritonTPC[mTri + i]),"");
   }
   TLegend *legPIDCutRejTritonTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejTritonTPCTOF->SetFillStyle(0);
@@ -1696,7 +1783,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejTritonTPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejTritonTPCTOF->AddEntry((TObject*)0,"Triton rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejTritonTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Tri + i*10,RejectionTritonTPCTOF[mTri + i],eRejectionTritonTPCTOF[mTri + i]),"");
+    legPIDCutRejTritonTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Tri + i*10,RejectionTritonTPCTOF[mTri + i],eRejectionTritonTPCTOF[mTri + i]),"");
   }
   TLegend *legPIDCutRejHelium3TPC = new TLegend(.35,y1,.88,.88);
   legPIDCutRejHelium3TPC->SetFillStyle(0);
@@ -1704,7 +1791,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejHelium3TPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejHelium3TPC->AddEntry((TObject*)0,"Helium3 rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",He3 + i*10,RejectionHelium3TPC[mHe3 + i],eRejectionHelium3TPC[mHe3 + i]),"");
+    legPIDCutRejHelium3TPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3 + i*10,RejectionHelium3TPC[mHe3 + i],eRejectionHelium3TPC[mHe3 + i]),"");
   }
   TLegend *legPIDCutRejHelium3TPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejHelium3TPCTOF->SetFillStyle(0);
@@ -1712,7 +1799,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejHelium3TPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejHelium3TPCTOF->AddEntry((TObject*)0,"Helium3 rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejHelium3TPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",He3 + i*10,RejectionHelium3TPCTOF[mHe3 + i],eRejectionHelium3TPCTOF[mHe3 + i]),"");
+    legPIDCutRejHelium3TPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3 + i*10,RejectionHelium3TPCTOF[mHe3 + i],eRejectionHelium3TPCTOF[mHe3 + i]),"");
   }
   TLegend *legPIDCutRejAlphaTPC = new TLegend(.35,y1,.88,.88);
   legPIDCutRejAlphaTPC->SetFillStyle(0);
@@ -1720,7 +1807,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejAlphaTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejAlphaTPC->AddEntry((TObject*)0,"Alpha rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejAlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Alp + i*10,RejectionAlphaTPC[mAlp + i],eRejectionAlphaTPC[mAlp + i]),"");
+    legPIDCutRejAlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Alp + i*10,RejectionAlphaTPC[mAlp + i],eRejectionAlphaTPC[mAlp + i]),"");
   }
   TLegend *legPIDCutRejAlphaTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejAlphaTPCTOF->SetFillStyle(0);
@@ -1728,7 +1815,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejAlphaTPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejAlphaTPCTOF->AddEntry((TObject*)0,"Alpha rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejAlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",Alp + i*10,RejectionAlphaTPCTOF[mAlp + i],eRejectionAlphaTPCTOF[mAlp + i]),"");
+    legPIDCutRejAlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",Alp + i*10,RejectionAlphaTPCTOF[mAlp + i],eRejectionAlphaTPCTOF[mAlp + i]),"");
   }
   TLegend *legPIDCutRejHelium3AlphaTPC = new TLegend(.35,y1,.88,.88);
   legPIDCutRejHelium3AlphaTPC->SetFillStyle(0);
@@ -1736,7 +1823,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejHelium3AlphaTPC->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejHelium3AlphaTPC->AddEntry((TObject*)0,"Z=2 particle rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejHelium3AlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",He3Alp + i*10,RejectionHelium3AlphaTPC[mHe3Alp + i],eRejectionHelium3AlphaTPC[mHe3Alp + i]),"");
+    legPIDCutRejHelium3AlphaTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3Alp + i*10,RejectionHelium3AlphaTPC[mHe3Alp + i],eRejectionHelium3AlphaTPC[mHe3Alp + i]),"");
   }
   TLegend *legPIDCutRejHelium3AlphaTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejHelium3AlphaTPCTOF->SetFillStyle(0);
@@ -1744,7 +1831,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCutRejHelium3AlphaTPCTOF->AddEntry((TObject*)0,"Possible candidates:","");
   legPIDCutRejHelium3AlphaTPCTOF->AddEntry((TObject*)0,"Z=2 particle rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",He3Alp + i*10,RejectionHelium3AlphaTPCTOF[mHe3Alp + i],eRejectionHelium3AlphaTPCTOF[mHe3Alp + i]),"");
+    legPIDCutRejHelium3AlphaTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3Alp + i*10,RejectionHelium3AlphaTPCTOF[mHe3Alp + i],eRejectionHelium3AlphaTPCTOF[mHe3Alp + i]),"");
   }
   TLegend *legPIDCutRejDeuTriHe3AlpTPC = new TLegend(.35,y1,.88,.88);
   legPIDCutRejDeuTriHe3AlpTPC->SetFillStyle(0);
@@ -1753,7 +1840,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   if(AllOrAnti == "All") legPIDCutRejDeuTriHe3AlpTPC->AddEntry((TObject*)0,"d & t & He3 & #alpha rejection for <Q_{s}> cuts at:","");
   if(AllOrAnti == "Anti")legPIDCutRejDeuTriHe3AlpTPC->AddEntry((TObject*)0,"#bar{d} & #bar{t} & {}^{3}#bar{He} & #bar{#alpha} rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",DeuTriHe3Alp + i*10,RejectionDeuTriHe3AlpTPC[mDeuTriHe3Alp + i],eRejectionDeuTriHe3AlpTPC[mDeuTriHe3Alp + i]),"");
+    legPIDCutRejDeuTriHe3AlpTPC->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",DeuTriHe3Alp + i*10,RejectionDeuTriHe3AlpTPC[mDeuTriHe3Alp + i],eRejectionDeuTriHe3AlpTPC[mDeuTriHe3Alp + i]),"");
   }
   TLegend *legPIDCutRejDeuTriHe3AlpTPCTOF = new TLegend(.35,y1,.88,.88);
   legPIDCutRejDeuTriHe3AlpTPCTOF->SetFillStyle(0);
@@ -1762,7 +1849,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   if(AllOrAnti == "All") legPIDCutRejDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,"d & t & He3 & #alpha rejection for <Q_{s}> cuts at:","");
   if(AllOrAnti == "Anti")legPIDCutRejDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,"#bar{d} & #bar{t} & {}^{3}#bar{He} & #bar{#alpha} rejection for <Q_{s}> cuts at:","");
   for(Int_t i = 0; i < nopc; i++) {
-    legPIDCutRejDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.8f #pm %.8f",He3Alp + i*10,RejectionDeuTriHe3AlpTPCTOF[mDeuTriHe3Alp + i],eRejectionDeuTriHe3AlpTPCTOF[mDeuTriHe3Alp + i]),"");
+    legPIDCutRejDeuTriHe3AlpTPCTOF->AddEntry((TObject*)0,Form("#bullet %i:  %.6f #pm %.6f",He3Alp + i*10,RejectionDeuTriHe3AlpTPCTOF[mDeuTriHe3Alp + i],eRejectionDeuTriHe3AlpTPCTOF[mDeuTriHe3Alp + i]),"");
   }
 
   // legends for cd(9)
@@ -1791,10 +1878,27 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   legPIDCut160Helium3AlphaTPCTOF->SetBorderSize(0);
   legPIDCut160Helium3AlphaTPCTOF->AddEntry((TObject*)0,"160","");
 
+  // legends for cd(1-9)
+  //TLegend *legpTCut = new TLegend (.57,.24,.82,.36);
+  TLegend *legpTCut = new TLegend (.1,.34,.35,.46);
+  legpTCut->SetFillStyle(0);
+  legpTCut->SetBorderSize(0);
+  if(pTCut == 2.) legpTCut->AddEntry((TObject*)0,"#frac{#it{p}_{T}}{#it{Z}} < 2 GeV/#it{c}","");
+  TLegend *legpTCut2 = new TLegend (.55,.44,.8,.64);
+  legpTCut2->SetFillStyle(0);
+  legpTCut2->SetBorderSize(0);
+  if(pTCut == 2.) legpTCut2->AddEntry((TObject*)0,"#frac{#it{p}_{T}}{#it{Z}} < 2 GeV/#it{c}","");
+
+  TLegend *legTracklets = new TLegend(.54,.15,.92,.25);
+  legTracklets->SetFillStyle(0);
+  legTracklets->SetBorderSize(0);
+  if(Tracklets != "") legTracklets->AddEntry((TObject*)0,Form("%.f tracklet tracks",fnTrkl),"");
+
+
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Create and fill canvases
   ///_________________________________________________________________________________________________
-  TCanvas *c1 = new TCanvas("c1",Form("Deuteron Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
+  /*  TCanvas *c1 = new TCanvas("c1",Form("Deuteron Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c1->Divide(3,3);
   c1->cd(1)->SetLogz();
     fHistTRDpTvPID->Draw("colz");
@@ -1829,6 +1933,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c1->cd(9)->SetLogy();
     fEffRejDeuteronTPC->Draw("AP");
     legnSigmaCutDeuteronTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    if(i==6) continue;
+    c1->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c2 = new TCanvas("c2",Form("Deuteron Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c2->Divide(3,3);
@@ -1865,6 +1975,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c2->cd(9)->SetLogy();
     fEffRejDeuteronTPCTOF->Draw("AP");
     legnSigmaCutDeuteronTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    if(i==6) continue;
+    c2->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c3 = new TCanvas("c3",Form("Triton Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c3->Divide(3,3);
@@ -1901,6 +2017,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c3->cd(9)->SetLogy();
     fEffRejTritonTPC->Draw("AP");
     legnSigmaCutTritonTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    if(i==6) continue;
+    c3->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c4 = new TCanvas("c4",Form("Triton Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c4->Divide(3,3);
@@ -1937,6 +2059,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c4->cd(9)->SetLogy();
     fEffRejTritonTPCTOF->Draw("AP");
     legnSigmaCutTritonTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    if(i==6) continue;
+    c4->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c5 = new TCanvas("c5",Form("Helium3 Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c5->Divide(3,3);
@@ -1956,6 +2084,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     legMeanHelium3TPC->Draw("same");
     legMeanallHelium3TPC->Draw("same");
     legParticleHelium3->Draw("same");
+    legpTCut2->Draw("same");
   c5->cd(5);
     fPurityHelium3TPC->Draw("AP");
     legPIDCutPurHelium3TPC->Draw("same");
@@ -1973,6 +2102,13 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c5->cd(9)->SetLogy();
     fEffRejHelium3TPC->Draw("AP");
     legnSigmaCutHelium3AlphaTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    if(i==4) continue;
+    c5->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c6 = new TCanvas("c6",Form("Helium3 Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c6->Divide(3,3);
@@ -2009,6 +2145,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c6->cd(9)->SetLogy();
     fEffRejHelium3TPCTOF->Draw("AP");
     legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c6->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c7 = new TCanvas("c7",Form("Alpha Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c7->Divide(3,3);
@@ -2028,6 +2170,7 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     legMeanAlphaTPC->Draw("same");
     legMeanallAlphaTPC->Draw("same");
     legParticleAlpha->Draw("same");
+    legpTCut2->Draw("same");
   c7->cd(5);
     fPurityAlphaTPC->Draw("AP");
     legPIDCutPurAlphaTPC->Draw("same");
@@ -2045,6 +2188,13 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c7->cd(9)->SetLogy();
     fEffRejAlphaTPC->Draw("AP");
     legnSigmaCutHelium3AlphaTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    if(i==4) continue;
+    c7->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c8 = new TCanvas("c8",Form("Alpha Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c8->Divide(3,3);
@@ -2081,6 +2231,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   c8->cd(9)->SetLogy();
     fEffRejAlphaTPCTOF->Draw("AP");
     legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c8->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c9 = new TCanvas("c9",Form("Z=2 particle Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c9->Divide(3,3);
@@ -2120,6 +2276,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     //legPIDCut170Helium3AlphaTPC->Draw("same");
     //legPIDCut160Helium3AlphaTPC->Draw("same");
     legnSigmaCutHelium3AlphaTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c9->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c10 = new TCanvas("c10",Form("Z=2 particle Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c10->Divide(3,3);
@@ -2159,6 +2321,12 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     //legPIDCut170Helium3AlphaTPCTOF->Draw("same");
     //legPIDCut160Helium3AlphaTPCTOF->Draw("same");
     legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c10->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c11 = new TCanvas("c11",Form("d & t & He3 & Alpha Efficiency, Rejection, Purity for several cuts (TPC%iSigma ps)",Sigma));
   c11->Divide(3,3);
@@ -2194,7 +2362,13 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     legnSigmaCutDeuTriHe3AlpTPC->Draw("same");
   c11->cd(9)->SetLogy();
     fEffRejDeuTriHe3AlpTPC->Draw("AP");
-    legnSigmaCutDeuTriHe3AlpTPC9->Draw("same");
+    legnSigmaCutDeuTriHe3AlpTPC->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c11->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
   TCanvas *c12 = new TCanvas("c12",Form("d & t & He3 & Alpha Efficiency, Rejection, Purity for several cuts ((TPC&TOF)%iSigma ps)",Sigma));
   c12->Divide(3,3);
@@ -2230,8 +2404,26 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
     legnSigmaCutDeuTriHe3AlpTPCTOF->Draw("same");
   c12->cd(9)->SetLogy();
     fEffRejDeuTriHe3AlpTPCTOF->Draw("AP");
-    legnSigmaCutDeuTriHe3AlpTPCTOF9->Draw("same");
+    legnSigmaCutDeuTriHe3AlpTPCTOF->Draw("same");
+  for(Int_t i = 2; i <= 9; i++) {
+    //if(i==6) continue;
+    c12->cd(i);
+    legpTCut->Draw("same");
+    legTracklets->Draw("same");
+  }
 
+  c[0][0] = c1;
+  c[0][1] = c2;
+  c[1][0] = c3;
+  c[1][1] = c4;
+  c[2][0] = c5;
+  c[2][1] = c6;
+  c[3][0] = c7;
+  c[3][1] = c8;
+  c[4][0] = c9;
+  c[4][1] = c10;
+  c[5][0] = c11;
+  c[5][1] = c12;
 
   //TCanvas *c13 = new TCanvas ("c13","d & t & He3 & Alpha");
   //c13->Divide(1,1);
@@ -2243,71 +2435,300 @@ void bbrudnyj_ReadTreeTestTRDTriggerERP() {
   //  legMeanallDeuTriHe3AlpTPC->Draw("same");
   //  legParticleDeuTriHe3Alp->Draw("same");
 
+  Double_t width = 600;
+  Double_t high  = 400;
+
+  TCanvas *c14 = new TCanvas("c14","c14");
+  c14->Divide(1,1);
+  c14->cd(1);
+    fHistTRDPIDallDeuteronTPC->Draw();
+    fHistTRDPIDAllexceptDeuteronTPC_clear->Draw("same");
+    fHistTRDPIDDeuteronTPC_clear_Clone2->Draw("same");
+    legMeanDeuteronTPC->Draw("same");
+    legMeanallDeuteronTPC->Draw("same");
+    legParticleDeuteron->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c15 = new TCanvas("c15","c15");
+  c15->Divide(1,1);
+  c15->cd(1);
+    fHistTRDPIDallTritonTPC->Draw();
+    fHistTRDPIDAllexceptTritonTPC_clear->Draw("same");
+    fHistTRDPIDTritonTPC_clear_Clone2->Draw("same");
+    legMeanTritonTPC->Draw("same");
+    legMeanallTritonTPC->Draw("same");
+    legParticleTriton->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c16 = new TCanvas("c16","c16");
+  c16->Divide(1,1);
+  c16->cd(1);
+    fHistTRDPIDallHelium3TPC->Draw();
+    fHistTRDPIDAllexceptHelium3TPC->Draw("same");
+    fHistTRDPIDHelium3TPC_Clone2->Draw("same");
+    legMeanHelium3TPC->Draw("same");
+    legMeanallHelium3TPC->Draw("same");
+    legParticleHelium3->Draw("same");
+    legpTCut2->Draw("same");
+
+  TCanvas *c17 = new TCanvas("c17","c17");
+  c17->Divide(1,1);
+  c17->cd(1);
+    fHistTRDPIDallAlphaTPCTOF->Draw();
+    fHistTRDPIDAllexceptAlphaTPCTOF->Draw("same");
+    fHistTRDPIDAlphaTPCTOF_Clone2->Draw("same");
+    legMeanAlphaTPCTOF->Draw("same");
+    legMeanallAlphaTPCTOF->Draw("same");
+    legParticleAlpha->Draw("same");
+    legpTCut2->Draw("same");
+
+
+  */
+  TCanvas *c18 = new TCanvas("c18","c18");
+  c18->Divide(1,1);
+  c18->cd(1);
+    fHistTRDPIDallDeuTriHe3AlpTPCTOF->Draw();
+    fHistTRDPIDAllexceptDeuTriHe3AlpTPCTOF->Draw("same");
+    fHistTRDPIDDeuTriHe3AlpTPCTOF->Draw("same");
+    legMeanDeuTriHe3AlpTPCTOF->Draw("same");
+    legMeanallDeuTriHe3AlpTPCTOF->Draw("same");
+    legParticleDeuTriHe3Alp->Draw("same");
+    legColl->Draw("same");
+    legpTCut->Draw("same");
+    /*
+  TCanvas *c19 = new TCanvas("c19","c19");
+  c19->Divide(1,1);
+  c19->cd(1);
+    fPurityHelium3TPC->Draw("AP");
+    legPIDCutPurHelium3TPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c20 = new TCanvas("c20","c20");
+  c20->Divide(1,1);
+  c20->cd(1);
+    fEfficiencyHelium3TPC->Draw("AP");
+    legPIDCutEffHelium3TPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c21 = new TCanvas("c21","c21");
+  c21->Divide(1,1);
+  c21->cd(1);
+    fPurityDeuteronTPC->Draw("AP");
+    legPIDCutPurDeuteronTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c22 = new TCanvas("c22","c22");
+  c22->Divide(1,1);
+  c22->cd(1);
+    fEfficiencyDeuteronTPC->Draw("AP");
+    legPIDCutEffDeuteronTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c23 = new TCanvas("c23","c23");
+  c23->Divide(1,1);
+  c23->cd(1);
+    fPurityTritonTPC->Draw("AP");
+    legPIDCutPurTritonTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c24 = new TCanvas("c24","c24");
+  c24->Divide(1,1);
+  c24->cd(1);
+    fEfficiencyTritonTPC->Draw("AP");
+    legPIDCutEffTritonTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c25 = new TCanvas("c25","c25");
+  c25->Divide(1,1);
+  c25->cd(1);
+    fPurityAlphaTPC->Draw("AP");
+    legPIDCutPurAlphaTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c26 = new TCanvas("c26","c26");
+  c26->Divide(1,1);
+  c26->cd(1);
+    fEfficiencyAlphaTPC->Draw("AP");
+    legPIDCutEffAlphaTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c27 = new TCanvas("c27","c27");
+  c27->Divide(1,1);
+  c27->cd(1);
+    fPurityDeuTriHe3AlpTPC->Draw("AP");
+    legPIDCutPurDeuTriHe3AlpTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+
+  TCanvas *c28 = new TCanvas("c28","c28");
+  c28->Divide(1,1);
+  c28->cd(1);
+    fEfficiencyDeuTriHe3AlpTPC->Draw("AP");
+    legPIDCutEffDeuTriHe3AlpTPC->Draw("same");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legpTCut->Draw("same");
+  */
+
+  fEfficiencyAlphaTPCTOF->SetTitle("");
+  fEfficiencyAlphaTPCTOF->GetYaxis()->SetTitle("Trigger efficiency");
+  fEfficiencyAlphaTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+  fEfficiencyDeuteronTPCTOF->SetMarkerColor(38);
+  fEfficiencyTritonTPCTOF->SetMarkerColor(3);
+  fEfficiencyHelium3TPCTOF->SetMarkerColor(2);
+  fEfficiencyDeuTriHe3AlpTPCTOF->SetMarkerColor(4);
+  fEfficiencyDeuTriHe3AlpTPCTOF->SetMarkerStyle(34);
+  fEfficiencyDeuTriHe3AlpTPCTOF->SetTitle("");
+  fEfficiencyDeuTriHe3AlpTPCTOF->GetYaxis()->SetTitle("Trigger efficiency");
+  fEfficiencyDeuTriHe3AlpTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+
+  fPurityDeuteronTPCTOF->SetMinimum(0);
+  fPurityDeuteronTPCTOF->SetTitle("");
+  fPurityDeuteronTPCTOF->GetYaxis()->SetTitle("Purity");
+  fPurityDeuteronTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+  fPurityDeuteronTPCTOF->SetMarkerColor(38);
+  fPurityDeuteronTPCTOF->SetMarkerStyle(20);
+  fPurityTritonTPCTOF->SetMarkerColor(3);
+  fPurityTritonTPCTOF->SetMarkerStyle(22);
+  fPurityHelium3TPCTOF->SetMarkerColor(2);
+  fPurityHelium3TPCTOF->SetMarkerStyle(33);
+  fPurityAlphaTPCTOF->SetMarkerColor(15);
+  fPurityAlphaTPCTOF->SetMarkerStyle(34);
+  fPurityDeuTriHe3AlpTPCTOF->SetMarkerStyle(34);
+  fPurityDeuTriHe3AlpTPCTOF->SetTitle("");
+  fPurityDeuTriHe3AlpTPCTOF->GetYaxis()->SetTitle("Purity");
+  fPurityDeuTriHe3AlpTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+
+  fRejectionDeuTriHe3AlpTPCTOF->SetMarkerStyle(34);
+  fRejectionDeuTriHe3AlpTPCTOF->SetTitle("");
+  fRejectionDeuTriHe3AlpTPCTOF->GetYaxis()->SetTitle("Rejection");
+  fRejectionDeuTriHe3AlpTPCTOF->GetXaxis()->SetTitle("TRD  <#it{Q}_{s}> (arb. units)");
+
+  TLegend *legEffMarker = new TLegend(.73,.45,.88,.87);
+  //legEffMarker->SetFillStyle(0);
+  legEffMarker->SetBorderSize(0);
+  //legEffMarker->AddEntry(fEfficiencyDeuteronTPCTOF,"{}^{2}H","p");
+  legEffMarker->AddEntry(fEfficiencyDeuteronTPCTOF,"  d","p");
+  //legEffMarker->AddEntry(fEfficiencyTritonTPCTOF,"{}^{3}H","p");
+  legEffMarker->AddEntry(fEfficiencyTritonTPCTOF,"   t","p");
+  legEffMarker->AddEntry(fEfficiencyHelium3TPCTOF,"{}^{3}He","p");
+  legEffMarker->AddEntry(fEfficiencyAlphaTPCTOF,"{}^{4}He","p");
+
+  TLegend *legEffMarkerall = new TLegend(.51,.65,.81,.83);
+  //legEffMarkerall->SetFillStyle(0);
+  legEffMarkerall->SetBorderSize(0);
+  //legEffMarkerall->AddEntry(fEfficiencyDeuTriHe3AlpTPCTOF,"#splitline{{}^{2}H, {}^{3}H,}{{}^{3}He, {}^{4}He}","p");
+  legEffMarkerall->AddEntry(fEfficiencyDeuTriHe3AlpTPCTOF,"#splitline{   d,  t, }{{}^{3}He, {}^{4}He}","p");
+
+  TLegend *legEffMarkerallOther = new TLegend(.4,.68,.89,.88);
+  //legEffMarkerall->SetFillStyle(0);
+  legEffMarkerallOther->SetBorderSize(0);
+  legEffMarkerallOther->AddEntry(fEfficiencyDeuTriHe3AlpTPCTOF,"#splitline{Other particles than}{d, t,{}^{3}He, {}^{4}He}","p");
+
+  TLegend *legRej1000 = new TLegend(.0,.43,.57,.53);
+  legRej1000->SetFillStyle(0);
+  legRej1000->SetBorderSize(0);
+  legRej1000->AddEntry((TObject*)0,"Trigger rejection 1/1000","");
+
+  TCanvas *c29 = new TCanvas("c29","c29");
+  c29->Divide(1,1);
+  c29->cd(1);
+    fEfficiencyDeuteronTPC->Draw("APX");
+    fEfficiencyTritonTPC->Draw("samePX");
+    fEfficiencyHelium3TPC->Draw("samePX");
+    fEfficiencyAlphaTPC->Draw("samePX");
+    legnSigmaCutHelium3AlphaTPC->Draw("same");
+    legEffMarker->Draw("same");
+
+  TCanvas *c30 = new TCanvas("c30","c30");
+  c30->Divide(1,1);
+  c30->cd(1)->SetGrid();
+    fEfficiencyAlphaTPCTOF->Draw("AP2");
+    fEfficiencyHelium3TPCTOF->Draw("sameP2");
+    fEfficiencyTritonTPCTOF->Draw("sameP2");
+    fEfficiencyDeuteronTPCTOF->Draw("sameP2");
+    //legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+    legEffMarker->Draw("same");
+
+  TCanvas *c31 = new TCanvas("c31","c31");
+  c31->Divide(1,1);
+  c31->cd(1)->SetGrid();
+    fEfficiencyDeuTriHe3AlpTPCTOF->Draw("AP2");
+    //legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+    legEffMarkerall->Draw("same");
+
+  TCanvas *c32 = new TCanvas("c32","c32");
+  c32->Divide(1,1);
+  c32->cd(1)->SetGrid();
+    fPurityDeuTriHe3AlpTPCTOF->Draw("AP2");
+    //legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+    legEffMarkerall->Draw("same");
+
+  TCanvas *c33 = new TCanvas("c33","c33");
+  c33->Divide(1,1);
+  c33->cd(1)->SetGrid();
+    fPurityDeuteronTPCTOF->Draw("AP2");
+    fPurityHelium3TPCTOF->Draw("sameP2");
+    fPurityAlphaTPCTOF->Draw("sameP2");
+    fPurityTritonTPCTOF->Draw("sameP2");
+    //legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+    legEffMarker->Draw("same");
+
+  TCanvas *c34 = new TCanvas("c34","c34");
+  c34->Divide(1,1);
+  c34->cd(1)->SetGrid();
+  c34->cd(1)->SetLogy();
+    fRejectionDeuTriHe3AlpTPCTOF->Draw("AP2");
+    //legnSigmaCutHelium3AlphaTPCTOF->Draw("same");
+    legEffMarkerallOther->Draw("same");
+    legRej1000->Draw("same");
+
+    /*
+    c30->SaveAs(Form("~/TRDEffPartdt.pdf"));
+    c31->SaveAs(Form("~/TRDEffdt.pdf"));
+    c33->SaveAs(Form("~/TRDPurPartdt.pdf"));
+    c32->SaveAs(Form("~/TRDPurdt.pdf"));
+    c34->SaveAs(Form("~/TRDRejdt.pdf"));
+
+    c18->SaveAs(Form("~/TRDProjdt.pdf"));
+	  /*
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   /// Save canvases
-  ///____________________________________________________________________________________________
-  if(AllOrAnti == "All") {
-    c1 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuteronTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c1 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuteronTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c2 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuteronTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c2 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuteronTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c3 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_TritonTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c3 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_TritonTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c4 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_TritonTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c4 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_TritonTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c5 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Helium3TPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c5 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Helium3TPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c6 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Helium3TPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c6 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Helium3TPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c7 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AlphaTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c7 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AlphaTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c8 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AlphaTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c8 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AlphaTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c9 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Z2particlesTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c9 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Z2particlesTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c10->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Z2particlesTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c10->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_Z2particlesTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c11->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuTriHe3AlpTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c11->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuTriHe3AlpTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c12->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuTriHe3AlpTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c12->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_DeuTriHe3AlpTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-  }
-  if(AllOrAnti == "Anti") {
-    c1 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuteronTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c1 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuteronTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c2 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuteronTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c2 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuteronTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c3 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiTritonTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c3 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiTritonTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c4 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiTritonTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c4 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiTritonTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c5 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiHelium3TPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c5 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiHelium3TPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c6 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiHelium3TPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c6 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiHelium3TPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c7 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiAlphaTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c7 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiAlphaTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c8 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiAlphaTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c8 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiAlphaTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c9 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiZ2particlesTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c9 ->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiZ2particlesTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c10->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiZ2particlesTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c10->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiZ2particlesTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c11->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuTriHe3AlpTPC%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c11->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuTriHe3AlpTPC%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
-    c12->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuTriHe3AlpTPCTOF%iSigma%s.pdf",Collisions,Sigma,Sigma,Collisions));
-    c12->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma/bbrudnyj_AntiDeuTriHe3AlpTPCTOF%iSigma%s.root",Collisions,Sigma,Sigma,Collisions));
+  ///_____________________________________
+  for(Int_t j = 0; j < nParticles; j++) {
+    for(Int_t k = 0; k < nPreselections; k++) {
+      for(Int_t f = 0; f < nFiles; f++) {
+        if(AllOrAnti == "All") {
+          c[j][k]->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma%s/bbrudnyj_%s%s%s%iSigma%s%s.%s",Collisions,Tracklets,Sigma,pT2,Particle[j],Preselection[k],Tracklets,Sigma,Collisions,pT2,File[f]));
+	}
+        else if(AllOrAnti == "Anti") {
+          c[j][k]->SaveAs(Form("/lustre/nyx/alice/users/bbrudnyj/codes/%s/%s/bbrudnyj_ReadTreeTestTRDTriggerERP/plots%iSigma%s/bbrudnyj_Anti%s%s%s%iSigma%s%s.%s",Collisions,Tracklets,Sigma,pT2,Particle[j],Preselection[k],Tracklets,Sigma,Collisions,pT2,File[f]));
+        }
+      }
+    }
   }
 
   printf("\n\ndone!\n");
-
-
+    */
 }
 
-
-Double_t GaussError(Int_t a, Double_t da, Int_t b, Double_t db) // for function f = a/b
+Double_t GaussError(Double_t a, Double_t da, Double_t b, Double_t db) // for function f = a/b
 {
 
-  return TMath::Sqrt( (da/b)*(da/b) + (((a*db)/b)/b)*(((a*db)/b)/b) );
+  return (a/b) * TMath::Sqrt( (da/a)*(da/a) + (db/b)*(db/b) );
 
 }
+
+//Double_t GaussError(Int_t a, Double_t da, Int_t b, Double_t db) // for function f = a/b
+//{
+//
+//  return TMath::Sqrt( (da/b)*(da/b) + (((a*db)/b)/b)*(((a*db)/b)/b) );
+//
+//}
